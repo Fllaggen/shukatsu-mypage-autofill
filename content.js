@@ -48,6 +48,10 @@
     faculty: ["faculty", "facultyname", "gakubu", "学部", "研究科"],
     department: ["department", "major", "gakka", "course", "学科", "専攻", "コース"],
     schoolType: ["schooltype", "school_type", "学校区分", "学校種別", "学校分類"],
+    schoolStartYear: ["schoolstartyear", "enrollmentstartyear", "入学年", "在籍開始年", "在籍期間年"],
+    schoolStartMonth: ["schoolstartmonth", "enrollmentstartmonth", "入学月", "在籍開始月", "在籍期間月"],
+    schoolEndYear: ["schoolendyear", "enrollmentendyear", "卒業予定年", "在籍終了年"],
+    schoolEndMonth: ["schoolendmonth", "enrollmentendmonth", "卒業予定月", "在籍終了月"],
     degree: ["degree", "学位", "課程", "取得学位"],
     degreeYear: ["degreeyear", "degree_year", "取得年月年", "取得年"],
     degreeMonth: ["degreemonth", "degree_month", "取得年月月", "取得月"],
@@ -78,10 +82,20 @@
     studentEffort: ["gakuchika", "学生時代に力を入れたこと", "学生時代", "力を入れたこと", "打ち込んだこと", "取り組んだこと"],
     strengths: ["strength", "strongpoint", "強み", "長所", "得意なこと"],
     weakness: ["weakness", "weakpoint", "弱み", "短所", "苦手なこと"],
-    howKnowCompany: ["howknow", "きっかけ", "知ったきっかけ", "何で知った", "媒体", "就職サイト", "ナビサイト"],
+    howKnowCompany: ["howknow", "きっかけ", "キッカケ", "知ったきっかけ", "知ったキッカケ", "何で知った", "媒体", "就職サイト", "ナビサイト"],
     internshipExperience: ["internship", "event", "説明会", "インターン", "イベント", "参加したこと"],
+    loginId: ["loginid", "userid", "user_id", "accountid", "account_id", "ログインid", "ログインID", "マイページid", "マイページID"],
     verificationCode: ["verificationcode", "authcode", "onetimecode", "one-time-code", "確認コード", "認証コード", "6桁の半角数字"],
-    password: ["password", "passwd", "pass", "pw", "newpassword", "パスワード"]
+    password: ["password", "passwd", "pass", "pw", "newpassword", "パスワード"],
+    foreignAddress: ["foreignaddress", "overseasaddress", "kaigaig", "日本国外の場合", "海外住所", "国外住所"],
+    referralDetail: ["referraldetail", "referral_detail", "紹介者", "紹介者名", "その他詳細", "その他を選択", "社員からの紹介", "教授からの紹介"],
+    employmentBrand: ["employmentbrand", "workbrand", "勤務ブランド", "勤務経験ブランド", "勤務先ブランド", "ブランド勤務経験", "ユニクロ", "ジーユー", "プラステ"],
+    employmentStore: ["employmentstore", "storename", "store_name", "勤務店舗", "店舗名", "勤務先店舗"],
+    employeeNumber: ["employeenumber", "employeeid", "employee_id", "staffid", "staff_id", "社員番号", "従業員番号", "スタッフ番号"],
+    employmentStartYear: ["employmentstartyear", "workstartyear", "勤務開始年", "入社年", "勤務開始年月年"],
+    employmentStartMonth: ["employmentstartmonth", "workstartmonth", "勤務開始月", "入社月", "勤務開始年月月"],
+    employmentDuration: ["employmentduration", "workduration", "勤務期間", "アルバイト期間"],
+    relocationConsent: ["relocationconsent", "relocation", "transferconsent", "転勤可能", "転勤する可能性", "転勤に同意", "転勤を理解"]
   };
 
   const AUTOCOMPLETE_FIELDS = {
@@ -223,6 +237,7 @@
     if (option === value || tokens.includes(option)) return true;
     if ((value === "true" || value === "yes" || value === "同意" || value === "同意する") && /同意|承諾|確認|agree|accept|はい|yes/.test(option)) return true;
     if ((value === "false" || value === "no" || value === "なし" || value === "無") && /なし|無|いいえ|no|該当なし|経験なし/.test(option)) return true;
+    if (field === "gradStatus" && /卒業|予定|見込み|修了/.test(value) && /はい|yes|卒業予定|見込み|卒業見込み/.test(option)) return true;
     if ((field === "gender" || field === "driverLicense" || field === "humanitiesScience") && tokens.some((token) => option.includes(token) || token.includes(option))) return true;
     if (value.length >= 2 && (option.includes(value) || value.includes(option))) return true;
     return tokens.some((token) => token.length >= 2 && (option.includes(token) || token.includes(option)));
@@ -387,12 +402,15 @@
       if (index === 27) return "mobilePhone";
     }
     if (/確認コード|認証コード|verificationcode|authcode|onetimecode|6桁/.test(allCtx + rawName)) return "verificationCode";
+    if (/loginid|userid|accountid|tbxid|ログインid|ログインID|マイページid|マイページID/.test(rawName + allCtx)) return "loginId";
     if (/^local\.?email$/.test(rawName)) return "emailConfirm";
+    if (/もう一度|再入力|確認/.test(allCtx) && /submail|smail|サブメール/.test(rawName + allCtx)) return "subEmailConfirm";
     if (/もう一度|再入力|確認/.test(allCtx) && /local\.?email|email|mail|メール/.test(rawName + allCtx)) return "emailConfirm";
     if (AUTOCOMPLETE_FIELDS[autocomplete]) return AUTOCOMPLETE_FIELDS[autocomplete];
     if (/^(adch|cbxkflg)$/.test(rawName) || /現住所と同じ|帰省先は現住所/.test(allCtx)) return "holidaySame";
     if (type === "checkbox" && /privacy|個人情報|プライバシー|取り扱い/.test(rawName + allCtx) && !/現住所と同じ|帰省先/.test(allCtx)) return "privacyConsent";
     if (type === "checkbox" && /terms|consent|agree|agreement|policy|kiyaku|規約|同意|利用条件/.test(rawName + allCtx) && !/現住所と同じ|帰省先/.test(allCtx)) return "termsConsent";
+    if (type === "checkbox" && /kaigaig|日本国外の場合|海外住所|国外住所/.test(rawName + allCtx)) return "foreignAddress";
     if (type === "email") return /confirm|confirmation|確認|再入力|もう一度/.test(allCtx) ? "emailConfirm" : "email";
     if (placeholder === "姓") return "lastName";
     if (placeholder === "名") return "firstName";
@@ -423,10 +441,26 @@
       if (/_?d1$/.test(rawName) || kind === "year") return "gradYear";
       if (/_?d2$/.test(rawName) || kind === "month") return "gradMonth";
     }
+    if (el.tagName === "SELECT" && /在籍期間|在学期間|在籍年月|入学.*卒業/.test(allCtx)) {
+      const index = indexAmongSameCaption(el, "select");
+      if (index === 0) return "schoolStartYear";
+      if (index === 1) return "schoolStartMonth";
+      if (index === 2) return "schoolEndYear";
+      if (index === 3) return "schoolEndMonth";
+    }
     if (/インターンシップ|説明会|セミナー|イベント/.test(allCtx) && type === "checkbox") return "interestedEvents";
     if (/未定|別日程|希望日程|参加希望日|開催日|説明会日程|イベント日程/.test(allCtx) && el.tagName === "SELECT") return "eventDate";
     if (/マイナビ|外資就活|就活サイト|検索エンジン|wantedly|sns|紹介会社|知人からの紹介/.test(allCtx) && el.tagName === "SELECT") return "howKnowCompany";
+    if (/知ったキッカケ|知ったきっかけ|何で知った|媒体/.test(allCtx)) return "howKnowCompany";
     if (/企業理念|社会貢献|将来性|大企業|有名企業|仕事内容|休日|休暇|給与|待遇|福利厚生|職場の雰囲気|財務状況|研修制度|業界順位|勤務地で働ける/.test(allCtx)) return "companyCriteria";
+    if (/^i373$/.test(rawName) || (type === "checkbox" && /ユニクロ|ジーユー|プラステ|勤務ブランド|勤務経験ブランド|勤務先ブランド/.test(allCtx))) return "employmentBrand";
+    if (/^i375$/.test(rawName) || /勤務店舗|店舗名|勤務先店舗|記入例.*店/.test(allCtx)) return "employmentStore";
+    if (/^i376$/.test(rawName) || /社員番号|従業員番号|スタッフ番号|8ケタ|8桁/.test(allCtx)) return "employeeNumber";
+    if (/^i377d1$/.test(rawName) || /勤務開始年|入社年/.test(allCtx)) return "employmentStartYear";
+    if (/^i377d2$/.test(rawName) || /勤務開始月|入社月/.test(allCtx)) return "employmentStartMonth";
+    if (/^i378$/.test(rawName) || /勤務期間|アルバイト期間/.test(allCtx)) return "employmentDuration";
+    if (/紹介者名|社員からの紹介|教授からの紹介|その他.*詳細|その他を選択/.test(allCtx)) return "referralDetail";
+    if (/転勤する可能性|転勤.*理解|転勤可能|転勤に同意/.test(allCtx)) return "relocationConsent";
 
     if (/^(tbxsmailr|account4|domain4)$/.test(rawName) || /submail.*r|smail.*r|サブメール.*再入力/.test(ctx)) return "subEmailConfirm";
     if (/^(tbxsmail|account3|domain3)$/.test(rawName) || /submail|smail|サブメール/.test(ctx)) return "subEmail";
@@ -526,6 +560,8 @@
     const postal = splitPostal(profile.postalCode);
     const homeTel = splitPhone(profile.homePhone);
     const mobileTel = splitPhone(profile.mobilePhone);
+    const gradYearNum = Number(String(profile.gradYear || "").replace(/\D/g, ""));
+    const inferredSchoolStartYear = gradYearNum ? String(gradYearNum - 4) : "";
 
     return {
       fullName: [profile.lastName, profile.firstName].filter(Boolean).join(" "),
@@ -565,6 +601,10 @@
       faculty: profile.faculty,
       department: profile.department,
       schoolType: profile.schoolType,
+      schoolStartYear: profile.schoolStartYear || inferredSchoolStartYear,
+      schoolStartMonth: two(profile.schoolStartMonth || "04"),
+      schoolEndYear: profile.schoolEndYear || profile.gradYear,
+      schoolEndMonth: two(profile.schoolEndMonth || profile.gradMonth),
       degree: profile.degree,
       degreeYear: profile.degreeYear || profile.gradYear,
       degreeMonth: two(profile.degreeMonth || profile.gradMonth),
@@ -597,8 +637,18 @@
       weakness: profile.weakness,
       howKnowCompany: profile.howKnowCompany,
       internshipExperience: profile.internshipExperience,
+      loginId: profile.loginId || profile.email,
       verificationCode: profile.verificationCode,
       password: profile.password,
+      foreignAddress: profile.foreignAddress,
+      referralDetail: profile.referralDetail,
+      employmentBrand: profile.employmentBrand,
+      employmentStore: profile.employmentStore,
+      employeeNumber: profile.employeeNumber,
+      employmentStartYear: profile.employmentStartYear,
+      employmentStartMonth: two(profile.employmentStartMonth),
+      employmentDuration: profile.employmentDuration,
+      relocationConsent: profile.relocationConsent,
       account1: email.account,
       domain1: email.domain,
       account2: email.account,
@@ -693,7 +743,8 @@
 
     for (const el of fields) {
       const field = detectField(el);
-      const wanted = field ? valueFor(el, field, values) : customAnswerFor(el, customAnswers);
+      const customWanted = customAnswerFor(el, customAnswers);
+      const wanted = customWanted || (field ? valueFor(el, field, values) : "");
       if (wanted === undefined || wanted === null || wanted === "") continue;
       const effectiveField = field || "customAnswer";
       const radioGroupKey = el.type === "radio" ? `${effectiveField}:${el.name || el.id || effectiveField}` : "";
@@ -707,7 +758,7 @@
       if (el.tagName === "SELECT") ok = selectByTextOrValue(el, wanted, effectiveField);
       else if (el.type === "radio") ok = setRadio(el, effectiveField, wanted);
       else if (el.type === "checkbox") {
-        if (["holidaySame", "termsConsent", "privacyConsent"].includes(effectiveField)) {
+        if (["holidaySame", "termsConsent", "privacyConsent", "foreignAddress"].includes(effectiveField)) {
           const shouldCheck = Boolean(wanted);
           if (el.checked !== shouldCheck) el.click();
           el.checked = shouldCheck;

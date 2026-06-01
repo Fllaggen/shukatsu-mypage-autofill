@@ -25,6 +25,10 @@ const DEFAULT_PROFILE = {
   faculty: "",
   department: "",
   schoolType: "",
+  schoolStartYear: "",
+  schoolStartMonth: "",
+  schoolEndYear: "",
+  schoolEndMonth: "",
   degree: "",
   degreeYear: "",
   degreeMonth: "",
@@ -57,9 +61,19 @@ const DEFAULT_PROFILE = {
   weakness: "",
   howKnowCompany: "",
   internshipExperience: "",
+  loginId: "",
   customAnswers: "",
   verificationCode: "",
-  password: ""
+  password: "",
+  foreignAddress: false,
+  referralDetail: "",
+  employmentBrand: "",
+  employmentStore: "",
+  employeeNumber: "",
+  employmentStartYear: "",
+  employmentStartMonth: "",
+  employmentDuration: "",
+  relocationConsent: ""
 };
 
 const fields = Array.from(document.querySelectorAll("[data-key]"));

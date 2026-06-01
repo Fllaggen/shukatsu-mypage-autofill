@@ -102,6 +102,14 @@
           <label>文理区分<input data-key="humanitiesScience" placeholder="文系"></label>
         </div>
         <div class="grid two">
+          <label>入学年<input data-key="schoolStartYear" placeholder="2023"></label>
+          <label>入学月<input data-key="schoolStartMonth" placeholder="04"></label>
+        </div>
+        <div class="grid two">
+          <label>卒業予定年<input data-key="schoolEndYear" placeholder="空欄なら卒業年"></label>
+          <label>卒業予定月<input data-key="schoolEndMonth" placeholder="空欄なら卒業月"></label>
+        </div>
+        <div class="grid two">
           <label>学位<input data-key="degree" placeholder="学士"></label>
           <label>学位取得年<input data-key="degreeYear" placeholder="2027"></label>
         </div>
@@ -137,9 +145,24 @@
           <label>在留資格<input data-key="residenceStatus" placeholder="日本国籍、永住者など"></label>
         </div>
         <label>就労資格<input data-key="workAuthorization" placeholder="就労可能"></label>
+        <label class="check"><input data-key="foreignAddress" type="checkbox">日本国外の住所を使う</label>
         <label>留学経験<input data-key="studyAbroad" placeholder="なし"></label>
         <label>障がい・配慮事項<input data-key="disabilityStatus" placeholder="なし"></label>
         <label>職歴<textarea data-key="employmentHistory" rows="3" placeholder="なし"></textarea></label>
+        <div class="grid two">
+          <label>勤務経験ブランド<input data-key="employmentBrand" placeholder="ユニクロ、ジーユーなど"></label>
+          <label>勤務店舗<input data-key="employmentStore" placeholder="東京ミッドタウン店など"></label>
+        </div>
+        <div class="grid two">
+          <label>社員番号<input data-key="employeeNumber" placeholder="8桁など"></label>
+          <label>勤務期間<input data-key="employmentDuration" placeholder="6カ月以上"></label>
+        </div>
+        <div class="grid two">
+          <label>勤務開始年<input data-key="employmentStartYear" placeholder="2025"></label>
+          <label>勤務開始月<input data-key="employmentStartMonth" placeholder="04"></label>
+        </div>
+        <label>転勤の確認回答<input data-key="relocationConsent" placeholder="はい、理解しています など"></label>
+        <label>紹介者・その他詳細<input data-key="referralDetail" placeholder="紹介者名、その他を選んだ理由など"></label>
         <label>該当なし用の回答<input data-key="noAnswer" placeholder="なし"></label>
       </section>
 
@@ -157,6 +180,7 @@
 
       <section class="panel">
         <h2>その他</h2>
+        <label>ログインID<input data-key="loginId" placeholder="空欄ならメールアドレスを使います"></label>
         <label>認証コード<input data-key="verificationCode" placeholder="メールで届いた6桁など"></label>
         <label>登録用パスワード<input data-key="password" type="password"></label>
       </section>
