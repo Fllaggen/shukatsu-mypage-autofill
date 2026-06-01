@@ -59,13 +59,20 @@
 
 ### 2. 企業マイページで入力する
 
-1. 企業のマイページ登録フォームを開きます。
-2. 拡張機能アイコンから `Shukatsu MyPage Autofill` を開きます。
-3. `入力補チェック` を押します。
-4. 入力できそうな項目数が表示されます。
-5. 問題なさそうなら `現在ページに入力` を押します。
-6. 入った内容を全部確認します。
-7. 間違いがなければ、自分で登録ボタンや次へボタンを押します。
+1. 企業のマイページ登録フォームを開きます。## Download first
+
+2. 1. Open Releases on this page.
+   2. 2. Open v0.2.0.
+      3. 3. Download Assets -> Source code (zip).
+         4. 4. Unzip it, then load the extracted folder from chrome://extensions or arc://extensions.
+           
+            5. 
+3. 拡張機能アイコンから `Shukatsu MyPage Autofill` を開きます。
+4. `入力補チェック` を押します。
+5. 入力できそうな項目数が表示されます。
+6. 問題なさそうなら `現在ページに入力` を押します。
+7. 入った内容を全部確認します。
+8. 間違いがなければ、自分で登録ボタンや次へボタンを押します。
 
 ## Arc で拡張機能が見つからないとき
 
