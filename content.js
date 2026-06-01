@@ -71,6 +71,51 @@
     "new-password": "password"
   };
 
+  const PLATFORM_RULES = [
+    {
+      label: "i-web / i-webs",
+      host: /(^|\.)i-webs\.jp$|(^|\.)i-web\.jpn\.com$|(^|\.)i-note\.jp$/i,
+      hint: /i-?web|applicant|mypage|entry|recruit/i
+    },
+    {
+      label: "sonar ATS / SNAR",
+      host: /(^|\.)snar\.jp$|(^|\.)sonar-ats\.jp$/i,
+      hint: /snar|sonar|jobboard|mypage|entry|apply/i
+    },
+    {
+      label: "AOL / アクセスオンライン",
+      host: /access[-_]?online|access[-_]?on[-_]?line|aol/i,
+      hint: /access[-_]?online|aol|mypage|entry|apply|recruit/i
+    },
+    {
+      label: "e2R pro",
+      host: /e2r|e2rpro|worksjapan/i,
+      hint: /e2r|mypage|entry|apply|recruit/i
+    },
+    {
+      label: "JobSuite FRESHERS",
+      host: /jobsuite|job-suite|freshers/i,
+      hint: /jobsuite|job-suite|freshers|mypage|entry|apply|recruit/i
+    },
+    {
+      label: "HITO-Link 新卒",
+      host: /hito-link|hitolink/i,
+      hint: /hito-link|hitolink|newgrad|fresh|candidate|mypage|entry|apply|recruit/i
+    },
+    {
+      label: "HRMOS採用 新卒版",
+      host: /(^|\.)hrmos\.co$|hrmos/i,
+      hint: /hrmos|newgrad|newgrads|mypage|entry|apply|recruit|jobs/i
+    },
+    {
+      label: "My CareerBox / OpenES",
+      host: /(^|\.)mcbox\.mynavi\.jp$|mycareerbox|openes/i,
+      hint: /mycareerbox|mcbox|openes|entry|es|profile|resume|submission/i
+    }
+  ];
+
+  const PLATFORM_ENTRY_HINT = /mycareerbox|mcbox|openes|e2r|e2rpro|jobsuite|job-suite|freshers|hitolink|hito-link|hrmos|sonar|snar|accessonline|access-online|aol/i;
+
   function normalize(value) {
     return String(value || "")
       .toLowerCase()
@@ -345,8 +390,10 @@
   }
 
   function platform() {
-    if (/\.snar\.jp/i.test(location.hostname)) return "SNAR";
-    if (/\.i-webs\.jp|\.i-web\.jpn\.com/i.test(location.hostname)) return "i-webs";
+    const host = location.hostname;
+    const hint = `${location.pathname} ${location.search} ${document.title}`;
+    const found = PLATFORM_RULES.find((rule) => rule.host.test(host) || rule.hint.test(hint));
+    if (found) return found.label;
     if (/herp\.cloud|hrmos\.co|talentio\.com|greenhouse\.io|lever\.co/i.test(location.hostname)) return "採用管理ツール系";
     return "汎用フォーム";
   }
@@ -399,16 +446,22 @@
       const label = (el.innerText || el.value || el.alt || "").trim();
       const href = el.href || "";
       const idName = `${el.id || ""} ${el.name || ""}`;
+      const combined = `${label} ${href} ${idName}`;
       if (/新規登録|プレエントリー|エントリー|会員登録|マイページ作成|応募する|応募|同意する|次\s*へ|登録|申し込む|apply|sign\s*up|register|join/i.test(label) || /first_access|lkb_apply|lkb_agree|lkb_next_prf|entry|apply|signup|register/i.test(idName) || /entry|apply|recruitment|signup|register|member|mypage/i.test(href)) {
         add(candidateFrom(el), "button-or-link");
       }
+      if (PLATFORM_ENTRY_HINT.test(combined) && /entry|apply|register|signup|mypage|resume|profile|submission|応募|登録|エントリー|マイページ|OpenES|ES/i.test(combined)) {
+        add(candidateFrom(el), "platform-entry");
+      }
     }
 
-    if (platform() === "i-webs") {
+    const currentPlatform = platform();
+
+    if (currentPlatform === "i-web / i-webs") {
       const parts = location.pathname.split("/").filter(Boolean);
       if (parts[0]) {
         add({
-          text: "i-webs 登録入口候補",
+          text: "i-web / i-webs 登録入口候補",
           id: "",
           name: "",
           href: `${location.origin}/${parts[0]}/applicant/entry/index/entrycd/`,
@@ -419,9 +472,9 @@
       }
     }
 
-    if (platform() === "SNAR") {
+    if (currentPlatform === "sonar ATS / SNAR") {
       add({
-        text: "SNAR エントリー入口候補",
+        text: "sonar ATS / SNAR エントリー入口候補",
         id: "",
         name: "",
         href: `${location.origin}/index.aspx`,
@@ -429,6 +482,18 @@
         formId: "",
         reason: "known-snar-pattern"
       }, "known-snar-pattern");
+    }
+
+    if (/AOL|アクセスオンライン|e2R|JobSuite|HITO-Link|HRMOS|My CareerBox|OpenES/.test(currentPlatform)) {
+      add({
+        text: `${currentPlatform} 現在ページ候補`,
+        id: "",
+        name: "",
+        href: location.href,
+        formAction: "",
+        formId: "",
+        reason: "known-platform-pattern"
+      }, "known-platform-pattern");
     }
 
     if (!candidates.length) {
