@@ -60,6 +60,9 @@
     toeic: ["toeic", "toefl", "ielts", "英語資格", "語学", "英語スコア"],
     desiredJob: ["desiredjob", "desired_job", "jobtype", "職種希望", "希望職種", "志望職種", "興味のあるお仕事", "興味のある仕事"],
     desiredLocation: ["desiredlocation", "desired_location", "希望勤務地", "勤務地希望", "志望勤務地"],
+    companyCriteria: ["companycriteria", "selectioncriteria", "企業選び", "就職活動の軸", "重視すること", "会社選び", "魅力に感じる"],
+    interestedEvents: ["interestedevents", "eventchoice", "参加希望イベント", "希望イベント", "インターンシップ", "説明会", "セミナー"],
+    eventDate: ["eventdate", "event_date", "参加希望日", "希望日程", "説明会日程", "イベント日程", "別日程"],
     requestNote: ["requestnote", "request", "希望記入欄", "希望欄", "備考", "連絡希望", "連絡事項"],
     termsConsent: ["terms", "agreement", "agree", "kiyaku", "規約", "利用条件", "同意する"],
     privacyConsent: ["privacy", "personalinfo", "personal_information", "個人情報", "プライバシー", "取り扱い"],
@@ -207,7 +210,7 @@
 
   function customAnswerFor(el, customAnswers) {
     if (!customAnswers.length) return "";
-    const ctx = fieldContext(el);
+    const ctx = `${fieldContext(el)} ${normalize(optionLabel(el))}`;
     const found = customAnswers.find((item) => item.normalizedKey.length >= 2 && ctx.includes(item.normalizedKey));
     return found?.value || "";
   }
@@ -294,6 +297,58 @@
       .slice(0, 120);
   }
 
+  function textNodeValue(node) {
+    return node && node.nodeType === Node.TEXT_NODE ? node.textContent.replace(/\s+/g, " ").trim() : "";
+  }
+
+  function adjacentText(el, direction) {
+    const chunks = [];
+    let node = direction === "next" ? el.nextSibling : el.previousSibling;
+    while (node && chunks.join(" ").length < 80) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = textNodeValue(node);
+        if (text) chunks.push(text);
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        const tag = node.tagName;
+        if (/^(INPUT|SELECT|TEXTAREA|BUTTON)$/.test(tag)) break;
+        const text = (node.innerText || node.textContent || "").replace(/\s+/g, " ").trim();
+        if (text) chunks.push(text);
+      }
+      node = direction === "next" ? node.nextSibling : node.previousSibling;
+    }
+    return chunks.join(" ").trim();
+  }
+
+  function optionLabel(el) {
+    const id = el.id ? CSS.escape(el.id) : "";
+    const explicit = id ? document.querySelector(`label[for="${id}"]`)?.innerText || "" : "";
+    const label = el.closest("label")?.innerText || "";
+    const aria = el.getAttribute("aria-label") || "";
+    const next = adjacentText(el, "next");
+    const prev = adjacentText(el, "previous");
+    const parentText = el.parentElement?.innerText || "";
+    const compactParent = parentText.length <= 90 ? parentText : "";
+    const type = String(el.type || "").toLowerCase();
+    const optionValue = ["checkbox", "radio"].includes(type) ? el.value : "";
+    return [optionValue, el.id, explicit, label, aria, next, prev, compactParent]
+      .filter(Boolean)
+      .join(" / ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 160);
+  }
+
+  function debugLabel(el) {
+    const label = fieldLabel(el);
+    const option = optionLabel(el);
+    return [label, option && option !== label ? option : ""]
+      .filter(Boolean)
+      .join(" / ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 180);
+  }
+
   function fieldCaption(el) {
     const id = el.id ? CSS.escape(el.id) : "";
     const explicit = id ? document.querySelector(`label[for="${id}"]`)?.innerText || "" : "";
@@ -321,8 +376,16 @@
     const allCtx = `${ctx} ${labelCtx}`;
     const autocomplete = normalize((el.autocomplete || "").split(/\s+/).pop());
     const type = String(el.type || "").toLowerCase();
+    const hitoInput = /^input(\d+)$/.exec(rawName);
 
     if (/recaptcha|g-recaptcha|languagecheck/.test(rawName)) return "";
+    if (/hito-link|hitolink/i.test(location.hostname) && hitoInput) {
+      const index = Number(hitoInput[1]);
+      if (index === 12) return "birthYear";
+      if (index === 15) return "birthMonth";
+      if (index === 18) return "birthDay";
+      if (index === 27) return "mobilePhone";
+    }
     if (/確認コード|認証コード|verificationcode|authcode|onetimecode|6桁/.test(allCtx + rawName)) return "verificationCode";
     if (/^local\.?email$/.test(rawName)) return "emailConfirm";
     if (/もう一度|再入力|確認/.test(allCtx) && /local\.?email|email|mail|メール/.test(rawName + allCtx)) return "emailConfirm";
@@ -335,6 +398,7 @@
     if (placeholder === "名") return "firstName";
     if (placeholder === "セイ") return "lastNameKana";
     if (placeholder === "メイ") return "firstNameKana";
+    if (/password|passwd|pass|pwd|pw/.test(rawName) || type === "password") return "password";
     if (el.tagName === "SELECT" && /生年月日|誕生日|birthday|birth/.test(allCtx)) {
       const kind = selectNumberKind(el);
       if (kind === "year") return "birthYear";
@@ -353,8 +417,17 @@
       if (index === 0) return "degreeYear";
       if (index === 1) return "degreeMonth";
     }
+    if (/shikbn|ddlsotsuk|graduationstatus|gradstatus/.test(rawName)) return "gradStatus";
+    if (/卒業予定年月|卒業年月/.test(allCtx)) {
+      const kind = el.tagName === "SELECT" ? selectNumberKind(el) : "";
+      if (/_?d1$/.test(rawName) || kind === "year") return "gradYear";
+      if (/_?d2$/.test(rawName) || kind === "month") return "gradMonth";
+    }
+    if (/インターンシップ|説明会|セミナー|イベント/.test(allCtx) && type === "checkbox") return "interestedEvents";
+    if (/未定|別日程|希望日程|参加希望日|開催日|説明会日程|イベント日程/.test(allCtx) && el.tagName === "SELECT") return "eventDate";
+    if (/マイナビ|外資就活|就活サイト|検索エンジン|wantedly|sns|紹介会社|知人からの紹介/.test(allCtx) && el.tagName === "SELECT") return "howKnowCompany";
+    if (/企業理念|社会貢献|将来性|大企業|有名企業|仕事内容|休日|休暇|給与|待遇|福利厚生|職場の雰囲気|財務状況|研修制度|業界順位|勤務地で働ける/.test(allCtx)) return "companyCriteria";
 
-    if (/password|passwd|pass|pwd|pw/.test(rawName)) return "password";
     if (/^(tbxsmailr|account4|domain4)$/.test(rawName) || /submail.*r|smail.*r|サブメール.*再入力/.test(ctx)) return "subEmailConfirm";
     if (/^(tbxsmail|account3|domain3)$/.test(rawName) || /submail|smail|サブメール/.test(ctx)) return "subEmail";
     if (/^(tbxmailr|account2|domain2)$/.test(rawName) || /mail.*r|メール.*再入力|メール.*もう一度|もう一度.*メール/.test(ctx)) return "emailConfirm";
@@ -440,6 +513,9 @@
     if (/氏名|お名前|名前|fullname|full_name/.test(allCtx) && !/学校|大学|会社|保護者|郵便|住所|電話|メール/.test(allCtx)) return "fullName";
     if (/希望記入欄|希望欄|備考|連絡希望|連絡事項/.test(allCtx)) return "requestNote";
     if (/住所|address/.test(allCtx) && !/メール|mail|email/.test(allCtx)) return "fullAddress";
+    if (/○○大学|学校名|大学名/.test(allCtx)) return "schoolName";
+    if (/○○学部|学部名/.test(allCtx)) return "faculty";
+    if (/○○学科|学科名|専攻名/.test(allCtx)) return "department";
     if (/電話|tel|phone/.test(allCtx)) return "phone";
     return "";
   }
@@ -501,6 +577,9 @@
       toeic: profile.toeic,
       desiredJob: profile.desiredJob,
       desiredLocation: profile.desiredLocation,
+      companyCriteria: profile.companyCriteria,
+      interestedEvents: profile.interestedEvents,
+      eventDate: profile.eventDate,
       requestNote: profile.requestNote,
       termsConsent: profile.termsConsent,
       privacyConsent: profile.privacyConsent,
@@ -589,8 +668,7 @@
   }
 
   function setRadio(el, field, value) {
-    const label = normalize(document.querySelector(`label[for="${CSS.escape(el.id)}"]`)?.innerText || el.closest("label")?.innerText || el.closest("span,td,div")?.innerText || "");
-    const raw = normalize([el.value, el.id, label].join(" "));
+    const raw = normalize(optionLabel(el));
     const wanted = normalize(value);
     const genderMatch =
       field === "gender" &&
@@ -636,11 +714,13 @@
           el.dispatchEvent(new Event("input", { bubbles: true }));
           el.dispatchEvent(new Event("change", { bubbles: true }));
           ok = true;
-        } else if (optionMatches([el.value, el.id, el.closest("label")?.innerText || el.closest("span,td,div")?.innerText || ""].join(" "), wanted, effectiveField)) {
+        } else if (optionMatches(optionLabel(el), wanted, effectiveField)) {
           el.checked = true;
           el.dispatchEvent(new Event("input", { bubbles: true }));
           el.dispatchEvent(new Event("change", { bubbles: true }));
           ok = true;
+        } else {
+          continue;
         }
       } else {
         setNativeValue(el, wanted);
@@ -678,10 +758,10 @@
   function scan() {
     const fields = getFillableFields();
     const detected = fields
-      .map((el) => ({ field: detectField(el), name: el.name || el.id, label: fieldLabel(el), type: el.type || el.tagName.toLowerCase() }))
+      .map((el) => ({ field: detectField(el), name: el.name || el.id, label: debugLabel(el), type: el.type || el.tagName.toLowerCase() }))
       .filter((item) => item.field);
     const unknownFields = fields
-      .map((el) => ({ field: detectField(el), name: el.name || el.id, label: fieldLabel(el), type: el.type || el.tagName.toLowerCase() }))
+      .map((el) => ({ field: detectField(el), name: el.name || el.id, label: debugLabel(el), type: el.type || el.tagName.toLowerCase() }))
       .filter((item) => !item.field);
     return {
       platform: platform(),

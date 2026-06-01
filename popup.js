@@ -37,6 +37,9 @@ const DEFAULT_PROFILE = {
   toeic: "",
   desiredJob: "",
   desiredLocation: "",
+  companyCriteria: "",
+  interestedEvents: "",
+  eventDate: "",
   requestNote: "",
   termsConsent: false,
   privacyConsent: false,
@@ -61,6 +64,7 @@ const DEFAULT_PROFILE = {
 
 const fields = Array.from(document.querySelectorAll("[data-key]"));
 const statusEl = document.querySelector("#status");
+let lastScan = null;
 
 function setStatus(message, warn = false) {
   statusEl.classList.toggle("warn", warn);
@@ -151,7 +155,26 @@ document.querySelector("#fill").addEventListener("click", async () => {
 document.querySelector("#scan").addEventListener("click", async () => {
   try {
     const result = await send("SCAN_ACTIVE");
+    lastScan = result;
     setStatus(summarizeScan(result));
+  } catch (error) {
+    setStatus(error.message, true);
+  }
+});
+
+document.querySelector("#copyUnknown").addEventListener("click", async () => {
+  try {
+    const result = lastScan || await send("SCAN_ACTIVE");
+    lastScan = result;
+    const lines = [
+      `URL: ${result.url}`,
+      `サイト: ${result.platform}`,
+      `入力欄: ${result.fields} / 判定: ${result.detected} / 未判定: ${result.unknown || 0}`,
+      "",
+      ...(result.unknownFields || []).map((item) => `- ${item.type}: ${item.label || item.name || "(名前なし)"}`)
+    ];
+    await navigator.clipboard.writeText(lines.join("\n"));
+    setStatus("未判定項目をコピーしました。対応依頼するときに貼り付けてください。");
   } catch (error) {
     setStatus(error.message, true);
   }
