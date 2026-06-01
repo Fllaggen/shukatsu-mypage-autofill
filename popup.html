@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shukatsu Autofill</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>Shukatsu Autofill</h1>
+        <p>企業マイページ登録フォーム用</p>
+      </div>
+      <label class="switch">
+        <input id="overwrite" type="checkbox" checked>
+        <span>上書き</span>
+      </label>
+    </header>
+
+    <main>
+      <section class="actions">
+        <button id="save" type="button">保存</button>
+        <button id="fill" type="button" class="primary">現在ページに入力</button>
+        <button id="scan" type="button">入力欄チェック</button>
+        <button id="findEntry" type="button">登録入口を探す</button>
+      </section>
+
+      <section id="status" class="status" aria-live="polite"></section>
+
+      <section class="panel">
+        <h2>名前</h2>
+        <div class="grid two">
+          <label>姓<input data-key="lastName" autocomplete="family-name"></label>
+          <label>名<input data-key="firstName" autocomplete="given-name"></label>
+          <label>セイ<input data-key="lastNameKana"></label>
+          <label>メイ<input data-key="firstNameKana"></label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>連絡先</h2>
+        <label>メインメール<input data-key="email" type="email" autocomplete="email"></label>
+        <label>サブメール<input data-key="subEmail" type="email"></label>
+        <div class="grid two">
+          <label>自宅電話<input data-key="homePhone" placeholder="03-1234-5678"></label>
+          <label>携帯番号<input data-key="mobilePhone" placeholder="090-1234-5678"></label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>基本情報</h2>
+        <div class="grid three">
+          <label>生年<input data-key="birthYear" inputmode="numeric" placeholder="2004"></label>
+          <label>月<input data-key="birthMonth" inputmode="numeric" placeholder="04"></label>
+          <label>日<input data-key="birthDay" inputmode="numeric" placeholder="01"></label>
+        </div>
+        <label>性別
+          <select data-key="gender">
+            <option value="">未選択</option>
+            <option value="男性">男性</option>
+            <option value="女性">女性</option>
+            <option value="無回答">無回答</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="panel">
+        <h2>住所</h2>
+        <div class="grid two">
+          <label>郵便番号<input data-key="postalCode" placeholder="100-0001"></label>
+          <label>都道府県<input data-key="prefecture" placeholder="東京都"></label>
+        </div>
+        <label>市区郡番地<input data-key="address1" placeholder="千代田区千代田1-1"></label>
+        <label>建物名<input data-key="address2" placeholder="○○マンション101"></label>
+        <label class="check"><input data-key="holidaySame" type="checkbox">休暇中住所は現住所と同じ</label>
+      </section>
+
+      <section class="panel">
+        <h2>学校</h2>
+        <div class="grid two">
+          <label>卒業年<input data-key="gradYear" inputmode="numeric" placeholder="2027"></label>
+          <label>卒業月<input data-key="gradMonth" inputmode="numeric" placeholder="03"></label>
+        </div>
+        <label>卒業区分
+          <select data-key="gradStatus">
+            <option value="">未選択</option>
+            <option value="卒業（修了）見込み">卒業（修了）見込み</option>
+            <option value="卒業予定">卒業予定</option>
+            <option value="卒業（修了）">卒業（修了）</option>
+            <option value="既卒">既卒</option>
+          </select>
+        </label>
+        <label>学校名<input data-key="schoolName"></label>
+        <div class="grid two">
+          <label>学部<input data-key="faculty"></label>
+          <label>学科・専攻<input data-key="department"></label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>任意</h2>
+        <label>登録用パスワード<input data-key="password" type="password"></label>
+      </section>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
