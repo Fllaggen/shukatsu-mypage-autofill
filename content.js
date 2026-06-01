@@ -75,46 +75,46 @@
     {
       label: "i-web / i-webs",
       host: /(^|\.)i-webs\.jp$|(^|\.)i-web\.jpn\.com$|(^|\.)i-note\.jp$/i,
-      hint: /i-?web|applicant|mypage|entry|recruit/i
+      hint: /i-?web|i-webs/i
     },
     {
       label: "sonar ATS / SNAR",
       host: /(^|\.)snar\.jp$|(^|\.)sonar-ats\.jp$/i,
-      hint: /snar|sonar|jobboard|mypage|entry|apply/i
+      hint: /snar|sonar|jobboard/i
     },
     {
       label: "AOL / アクセスオンライン",
-      host: /access[-_]?online|access[-_]?on[-_]?line|aol/i,
-      hint: /access[-_]?online|aol|mypage|entry|apply|recruit/i
+      host: /access[-_]?online|access[-_]?on[-_]?line|aol|axol/i,
+      hint: /access[-_]?online|aol|axol/i
     },
     {
       label: "e2R pro",
       host: /e2r|e2rpro|worksjapan/i,
-      hint: /e2r|mypage|entry|apply|recruit/i
+      hint: /e2r|e2rpro/i
     },
     {
       label: "JobSuite FRESHERS",
       host: /jobsuite|job-suite|freshers/i,
-      hint: /jobsuite|job-suite|freshers|mypage|entry|apply|recruit/i
+      hint: /jobsuite|job-suite|freshers/i
     },
     {
       label: "HITO-Link 新卒",
       host: /hito-link|hitolink/i,
-      hint: /hito-link|hitolink|newgrad|fresh|candidate|mypage|entry|apply|recruit/i
+      hint: /hito-link|hitolink/i
     },
     {
       label: "HRMOS採用 新卒版",
       host: /(^|\.)hrmos\.co$|hrmos/i,
-      hint: /hrmos|newgrad|newgrads|mypage|entry|apply|recruit|jobs/i
+      hint: /hrmos/i
     },
     {
       label: "My CareerBox / OpenES",
-      host: /(^|\.)mcbox\.mynavi\.jp$|mycareerbox|openes/i,
-      hint: /mycareerbox|mcbox|openes|entry|es|profile|resume|submission/i
+      host: /(^|\.)mcbox\.mynavi\.jp$|(^|\.)mcid\.mynavi\.jp$|mycareerbox|openes/i,
+      hint: /mycareerbox|mcbox|mcid|openes|profile|resume|submission/i
     }
   ];
 
-  const PLATFORM_ENTRY_HINT = /mycareerbox|mcbox|openes|e2r|e2rpro|jobsuite|job-suite|freshers|hitolink|hito-link|hrmos|sonar|snar|accessonline|access-online|aol/i;
+  const PLATFORM_ENTRY_HINT = /mycareerbox|mcbox|mcid|openes|e2r|e2rpro|jobsuite|job-suite|freshers|hitolink|hito-link|hrmos|sonar|snar|accessonline|access-online|aol|axol/i;
 
   function normalize(value) {
     return String(value || "")
@@ -160,7 +160,9 @@
       .map((attr) => attr.value)
       .join(" ");
     const parentLabel = el.closest("label")?.innerText || "";
-    const container = el.closest("tr, li, .formbox, .formBox, .form_box, .formItem, .formSet, .inputBox, .field, .field-row, .form-group, .form-control-wrap, dl, dd, section, div, span");
+    const container = el.closest("tr, li, .formbox, .formBox, .form_box, .formItem, .formSet, .inputBox, .field, .field-row, .form-group, .form-control-wrap, dl, dd, section");
+    const parentText = el.parentElement?.innerText || "";
+    const grandParentText = el.parentElement?.parentElement?.innerText || "";
     const dt = el.closest("dd")?.previousElementSibling?.innerText || "";
     const th = el.closest("td")?.previousElementSibling?.innerText || el.closest("tr")?.querySelector("th")?.innerText || "";
     const heading = el.closest("dl, section, form")?.querySelector("h1,h2,h3,.heading_l2,.h3")?.innerText || "";
@@ -177,31 +179,46 @@
       dt,
       th,
       heading,
-      container?.innerText || ""
+      container?.innerText || "",
+      parentText.length < 140 ? parentText : "",
+      grandParentText.length < 180 ? grandParentText : ""
     ].join(" "));
   }
 
   function detectField(el) {
     const ctx = fieldContext(el);
     const rawName = normalize(el.name || el.id);
+    const placeholder = normalize(el.placeholder || "");
     const autocomplete = normalize((el.autocomplete || "").split(/\s+/).pop());
+    const type = String(el.type || "").toLowerCase();
 
     if (AUTOCOMPLETE_FIELDS[autocomplete]) return AUTOCOMPLETE_FIELDS[autocomplete];
+    if (type === "checkbox" && /terms|consent|agree|agreement|policy|privacy|kiyaku|規約|同意|個人情報/.test(rawName + ctx) && !/現住所と同じ|帰省先/.test(ctx)) return "";
+    if (type === "email") return /confirm|confirmation|確認|再入力/.test(ctx) ? "emailConfirm" : "email";
+    if (placeholder === "姓") return "lastName";
+    if (placeholder === "名") return "firstName";
+    if (placeholder === "セイ") return "lastNameKana";
+    if (placeholder === "メイ") return "firstNameKana";
 
+    if (/password|passwd|pass|pwd|pw/.test(rawName)) return "password";
     if (/^(tbxsmailr|account4|domain4)$/.test(rawName) || /submail.*r|smail.*r|サブメール.*再入力/.test(ctx)) return "subEmailConfirm";
     if (/^(tbxsmail|account3|domain3)$/.test(rawName) || /submail|smail|サブメール/.test(ctx)) return "subEmail";
     if (/^(tbxmailr|account2|domain2)$/.test(rawName) || /mail.*r|メール.*再入力/.test(ctx)) return "emailConfirm";
-    if (/^(tbxmail|account1|domain1|email|mail)$/.test(rawName) || /メインメール/.test(ctx)) return "email";
+    if (/^(tbxmail|account1|domain1|email|mail|localemail)$/.test(rawName) || /メインメール/.test(ctx)) return "email";
     if (/confirm|confirmation|確認|再入力/.test(ctx) && /メール|mail|email/.test(ctx)) return "emailConfirm";
     if (/携帯|mobile|cell/.test(ctx) && /電話|tel|phone|番号/.test(ctx)) return "mobilePhone";
     if (/郵便番号|postal|zipcode|zip/.test(ctx) && !/[12]$/.test(rawName)) return "postalCode";
     if (/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) {
-      if (/1$|sei|last|family|姓|セイ/.test(rawName + ctx)) return "lastNameKana";
-      if (/2$|mei|first|given|名|メイ/.test(rawName + ctx)) return "firstNameKana";
+      if (/1$|kanasei|yname1|sei|last|family/.test(rawName)) return "lastNameKana";
+      if (/2$|kanana|yname2|mei|first|given/.test(rawName)) return "firstNameKana";
+      if (/フリガナ姓|カナ氏名姓|セイ/.test(ctx)) return "lastNameKana";
+      if (/フリガナ名|カナ氏名名|メイ/.test(ctx)) return "firstNameKana";
       return "fullNameKana";
     }
-    if (/name1$|sei|last|family|surname|姓/.test(rawName + ctx) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "lastName";
-    if (/name2$|mei|first|given|名/.test(rawName + ctx) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "firstName";
+    if (/name1$|kanjisei|kname1|sei|last|family|surname/.test(rawName) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "lastName";
+    if (/name2$|kanjina|kname2|mei|first|given/.test(rawName) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "firstName";
+    if (/氏名姓|漢字氏名姓|お名前姓/.test(ctx) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "lastName";
+    if (/氏名名|漢字氏名名|お名前名/.test(ctx) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "firstName";
     if (/gyubin1|tbxzip1|zip1|postal1|postalcode1/.test(rawName)) return "postal1";
     if (/gyubin2|tbxzip2|zip2|postal2|postalcode2/.test(rawName)) return "postal2";
     if (/gken|ddlken|prefecture|pref|addresslevel1/.test(rawName)) return "prefecture";
@@ -218,17 +235,34 @@
     if (/shikbn|ddlsotsuk|graduationstatus|gradstatus/.test(rawName)) return "gradStatus";
 
     for (const [field, aliases] of Object.entries(FIELD_ALIASES)) {
-      if (aliases.some((alias) => rawName === normalize(alias) || ctx.includes(normalize(alias)))) return field;
+      if (aliases.some((alias) => {
+        const normalizedAlias = normalize(alias);
+        return rawName === normalizedAlias;
+      })) return field;
+    }
+
+    if (type === "checkbox") return "";
+
+    for (const [field, aliases] of Object.entries(FIELD_ALIASES)) {
+      if (field === "password") continue;
+      if (aliases.some((alias) => {
+        const normalizedAlias = normalize(alias);
+        return normalizedAlias.length >= 2 && ctx.includes(normalizedAlias);
+      })) return field;
     }
 
     if (/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) {
-      if (/1$|sei|last|family|姓|セイ/.test(rawName + ctx)) return "lastNameKana";
-      if (/2$|mei|first|given|名|メイ/.test(rawName + ctx)) return "firstNameKana";
+      if (/1$|kanasei|yname1|sei|last|family/.test(rawName)) return "lastNameKana";
+      if (/2$|kanana|yname2|mei|first|given/.test(rawName)) return "firstNameKana";
+      if (/フリガナ姓|カナ氏名姓|セイ/.test(ctx)) return "lastNameKana";
+      if (/フリガナ名|カナ氏名名|メイ/.test(ctx)) return "firstNameKana";
       return "fullNameKana";
     }
-    if (/name1$|sei|last|family|surname|姓/.test(rawName + ctx) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "lastName";
-    if (/name2$|mei|first|given|名/.test(rawName + ctx) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "firstName";
-    if (/氏名|お名前|名前|fullname|full_name/.test(ctx) && !/学校|大学|会社|保護者/.test(ctx)) return "fullName";
+    if (/name1$|kanjisei|kname1|sei|last|family|surname/.test(rawName) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "lastName";
+    if (/name2$|kanjina|kname2|mei|first|given/.test(rawName) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "firstName";
+    if (/氏名姓|漢字氏名姓|お名前姓/.test(ctx) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "lastName";
+    if (/氏名名|漢字氏名名|お名前名/.test(ctx) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "firstName";
+    if (/氏名|お名前|名前|fullname|full_name/.test(ctx) && !/学校|大学|会社|保護者|郵便|住所|電話|メール/.test(ctx)) return "fullName";
     if (/住所|address/.test(ctx) && !/メール|mail|email/.test(ctx)) return "fullAddress";
     if (/電話|tel|phone/.test(ctx)) return "phone";
     return "";

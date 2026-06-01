@@ -13,14 +13,21 @@
 
 ## 対応を強めているサイト
 
+### 実際の登録フォームで入力確認済み
+
 - i-web
 - sonar ATS / snar.jp
-- AOL / アクセスオンライン
+- AOL / アクセスオンライン（job.axol.jp 系）
 - e2R pro
-- JobSuite FRESHERS
 - HITO-Link 新卒特化版
 - HRMOS採用 新卒版
 - My CareerBox / OpenES
+
+### 対応ルールを入れているサイト
+
+- JobSuite FRESHERS
+
+JobSuite FRESHERS は、誰でも開ける公開中の新規登録フォームを見つけられていないため、実フォームでの入力確認はまだです。
 
 ## 先に知っておくこと
 
@@ -37,9 +44,11 @@
 1. GitHub のこのページを開きます。
 2. 右側、またはページ内の `Releases` を押します。
 3. 一番新しいリリースを開きます。
-4. `Assets` の中にある `Source code (zip)` を押します。
+4. `Assets` の中にある `chrome_shukatsu_autofill.zip` を押します。
 5. ダウンロードされた ZIP ファイルを右クリックして、`すべて展開` を押します。
 6. 展開したフォルダの中に `manifest.json` があることを確認します。
+
+`Source code (zip)` ではなく、できれば `chrome_shukatsu_autofill.zip` を使ってください。その方が迷いにくいです。
 
 ### 2. Chrome に入れる
 
@@ -74,7 +83,7 @@
 
 1. 企業のマイページ登録フォームを開きます。
 2. 拡張機能アイコンから `Shukatsu MyPage Autofill` を開きます。
-3. `入力補チェック` を押します。
+3. `入力欄チェック` を押します。
 4. 入力できそうな項目数が表示されます。
 5. 問題なさそうなら `現在ページに入力` を押します。
 6. 入った内容を全部確認します。
