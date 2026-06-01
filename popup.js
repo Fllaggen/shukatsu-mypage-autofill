@@ -24,6 +24,38 @@ const DEFAULT_PROFILE = {
   schoolName: "",
   faculty: "",
   department: "",
+  schoolType: "",
+  degree: "",
+  degreeYear: "",
+  degreeMonth: "",
+  humanitiesScience: "",
+  seminar: "",
+  researchTheme: "",
+  club: "",
+  qualification: "",
+  driverLicense: "",
+  toeic: "",
+  desiredJob: "",
+  desiredLocation: "",
+  requestNote: "",
+  termsConsent: false,
+  privacyConsent: false,
+  residenceStatus: "",
+  workAuthorization: "",
+  nationality: "",
+  studyAbroad: "",
+  disabilityStatus: "",
+  employmentHistory: "",
+  noAnswer: "なし",
+  motivation: "",
+  selfPr: "",
+  studentEffort: "",
+  strengths: "",
+  weakness: "",
+  howKnowCompany: "",
+  internshipExperience: "",
+  customAnswers: "",
+  verificationCode: "",
   password: ""
 };
 
@@ -75,10 +107,15 @@ async function send(type, payload = {}) {
 function summarizeScan(result) {
   const lines = [
     `${result.platform} / 入力欄 ${result.fields} 個`,
-    `自動判定できた項目 ${result.detected} 個`
+    `自動判定できた項目 ${result.detected} 個`,
+    `未判定 ${result.unknown || 0} 個`
   ];
   if (result.detectedFields?.length) {
-    lines.push(result.detectedFields.slice(0, 10).map((item) => `・${item.field}: ${item.name}`).join("\n"));
+    lines.push(result.detectedFields.slice(0, 8).map((item) => `・${item.field}: ${item.label || item.name}`).join("\n"));
+  }
+  if (result.unknownFields?.length) {
+    lines.push("未判定の例");
+    lines.push(result.unknownFields.slice(0, 8).map((item) => `・${item.label || item.name || item.type}`).join("\n"));
   }
   return lines.join("\n");
 }

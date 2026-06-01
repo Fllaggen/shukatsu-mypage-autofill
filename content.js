@@ -13,21 +13,21 @@
   const FIELD_ALIASES = {
     fullName: ["fullname", "full_name", "yourname", "username", "applicantname", "氏名", "お名前"],
     fullNameKana: ["fullnamekana", "full_name_kana", "furigana", "phonetic", "氏名カナ", "フリガナ", "ふりがな"],
-    lastName: ["kname1", "tbx_name1", "sei", "familyname", "family-name", "lastname", "last-name", "surname", "name1", "氏名姓", "漢字氏名姓", "姓"],
-    firstName: ["kname2", "tbx_name2", "mei", "givenname", "given-name", "firstname", "first-name", "name2", "氏名名", "漢字氏名名", "名"],
+    lastName: ["kname1", "tbx_name1", "roma_sei", "kanji_sei", "sei", "familyname", "family-name", "lastname", "last-name", "surname", "name1", "氏名姓", "漢字氏名姓", "姓"],
+    firstName: ["kname2", "tbx_name2", "roma_na", "kanji_na", "mei", "givenname", "given-name", "firstname", "first-name", "name2", "氏名名", "漢字氏名名", "名"],
     lastNameKana: ["yname1", "tbx_kana1", "kana1", "kanasei", "furiganasei", "furigana_sei", "lastkana", "last_kana", "フリガナ姓", "カナ氏名姓", "セイ"],
     firstNameKana: ["yname2", "tbx_kana2", "kana2", "kanamei", "furiganamei", "furigana_mei", "firstkana", "first_kana", "フリガナ名", "カナ氏名名", "メイ"],
     email: ["tbx_mail", "email", "mail", "mailaddress", "mail_address", "e-mail", "account1", "domain1", "メインメール", "メールアドレス"],
     emailConfirm: ["tbx_mail_r", "email_confirm", "emailconfirmation", "mail_confirm", "mailconfirmation", "account2", "domain2", "再入力", "確認用メール"],
     subEmail: ["tbx_smail", "account3", "domain3", "サブメール"],
     subEmailConfirm: ["tbx_smail_r", "account4", "domain4"],
-    birthYear: ["ybirth", "ddl_birthy", "birthyear", "birth_year", "birthdayyear", "生年月日年", "誕生年"],
-    birthMonth: ["mbirth", "ddl_birthm", "birthmonth", "birth_month", "birthdaymonth", "生年月日月", "誕生月"],
-    birthDay: ["dbirth", "ddl_birthd", "birthday", "birth_day", "birthdayday", "生年月日日", "誕生日"],
+    birthYear: ["ybirth", "ddl_birthy", "birth_y", "birthyear", "birth_year", "birthdayyear", "生年月日年", "誕生年"],
+    birthMonth: ["mbirth", "ddl_birthm", "birth_m", "birthmonth", "birth_month", "birthdaymonth", "生年月日月", "誕生月"],
+    birthDay: ["dbirth", "ddl_birthd", "birth_d", "birthday", "birth_day", "birthdayday", "生年月日日", "誕生日"],
     gender: ["sexcd", "rbt_sex", "gender", "sex", "性別"],
     postalCode: ["postalcode", "postal-code", "zipcode", "zip-code", "zip", "郵便番号"],
-    postal1: ["gyubin1", "tbx_zip1", "zip1", "postal1", "postalcode1", "郵便番号前"],
-    postal2: ["gyubin2", "tbx_zip2", "zip2", "postal2", "postalcode2", "郵便番号後"],
+    postal1: ["gyubin1", "tbx_zip1", "yubing_h", "zip1", "postal1", "postalcode1", "郵便番号前"],
+    postal2: ["gyubin2", "tbx_zip2", "yubing_l", "zip2", "postal2", "postalcode2", "郵便番号後"],
     prefecture: ["gken", "ddl_ken", "pref", "prefecture", "address-level1", "都道府県"],
     fullAddress: ["fulladdress", "address", "street-address", "住所"],
     address1: ["gadrs1", "tbx_addr1", "addr1", "address1", "address-line1", "市区郡番地", "市区町村", "番地"],
@@ -37,9 +37,9 @@
     homeTel2: ["gtel2", "tbx_tel12", "tel2"],
     homeTel3: ["gtel3", "tbx_tel13", "tel3"],
     mobilePhone: ["mobile", "mobilephone", "mobile-phone", "cellphone", "携帯電話番号", "携帯番号", "携帯"],
-    mobileTel1: ["kttel1", "tbx_keitai1", "mobile1", "携帯番号前"],
-    mobileTel2: ["kttel2", "tbx_keitai2", "mobile2"],
-    mobileTel3: ["kttel3", "tbx_keitai3", "mobile3"],
+    mobileTel1: ["kttel1", "tbx_keitai1", "keitai_h", "mobile1", "携帯番号前"],
+    mobileTel2: ["kttel2", "tbx_keitai2", "keitai_m", "mobile2"],
+    mobileTel3: ["kttel3", "tbx_keitai3", "keitai_l", "mobile3"],
     holidaySame: ["adch", "cbx_kflg", "現住所と同じ", "チェックしてください"],
     gradYear: ["syear", "ddl_sotsuyy", "graduationyear", "graduation_year", "gradyear", "卒業年月年", "卒業年", "卒業予定年"],
     gradMonth: ["smonth", "ddl_sotsuym", "graduationmonth", "graduation_month", "gradmonth", "卒業年月月", "卒業月", "卒業予定月"],
@@ -47,6 +47,37 @@
     schoolName: ["school", "schoolname", "school_name", "gakkou", "university", "college", "大学名", "学校名"],
     faculty: ["faculty", "facultyname", "gakubu", "学部", "研究科"],
     department: ["department", "major", "gakka", "course", "学科", "専攻", "コース"],
+    schoolType: ["schooltype", "school_type", "学校区分", "学校種別", "学校分類"],
+    degree: ["degree", "学位", "課程", "取得学位"],
+    degreeYear: ["degreeyear", "degree_year", "取得年月年", "取得年"],
+    degreeMonth: ["degreemonth", "degree_month", "取得年月月", "取得月"],
+    humanitiesScience: ["bunri", "humanities", "science", "文理", "文理区分", "文系理系"],
+    seminar: ["seminar", "lab", "laboratory", "ゼミ", "研究室", "所属ゼミ", "所属研究室"],
+    researchTheme: ["researchtheme", "research_theme", "research", "研究テーマ", "研究内容", "卒論", "論文"],
+    club: ["club", "circle", "activity", "部活", "部活動", "クラブ", "サークル", "所属団体"],
+    qualification: ["qualification", "license", "certificate", "資格", "保有資格", "免許"],
+    driverLicense: ["driverlicense", "drivinglicense", "運転免許", "普通免許", "免許の有無"],
+    toeic: ["toeic", "toefl", "ielts", "英語資格", "語学", "英語スコア"],
+    desiredJob: ["desiredjob", "desired_job", "jobtype", "職種希望", "希望職種", "志望職種", "興味のあるお仕事", "興味のある仕事"],
+    desiredLocation: ["desiredlocation", "desired_location", "希望勤務地", "勤務地希望", "志望勤務地"],
+    requestNote: ["requestnote", "request", "希望記入欄", "希望欄", "備考", "連絡希望", "連絡事項"],
+    termsConsent: ["terms", "agreement", "agree", "kiyaku", "規約", "利用条件", "同意する"],
+    privacyConsent: ["privacy", "personalinfo", "personal_information", "個人情報", "プライバシー", "取り扱い"],
+    nationality: ["nationality", "country", "国籍"],
+    residenceStatus: ["residencestatus", "residence_status", "visa", "statusofresidence", "在留資格", "在留"],
+    workAuthorization: ["workauthorization", "work_authorization", "就労資格", "就労可否", "就労可能"],
+    studyAbroad: ["studyabroad", "overseas", "留学", "海外経験", "海外"],
+    disabilityStatus: ["disability", "障がい", "障害", "配慮事項"],
+    employmentHistory: ["employmenthistory", "workhistory", "jobhistory", "職歴", "勤務先", "アルバイト"],
+    noAnswer: ["該当なし", "なし", "特になし"],
+    motivation: ["motivation", "message", "志望動機", "志望理由", "応募理由", "入社理由", "応募先へのメッセージ", "メッセージ"],
+    selfPr: ["selfpr", "自己pr", "自己PR", "自己ピーアール", "自己アピール"],
+    studentEffort: ["gakuchika", "学生時代に力を入れたこと", "学生時代", "力を入れたこと", "打ち込んだこと", "取り組んだこと"],
+    strengths: ["strength", "strongpoint", "強み", "長所", "得意なこと"],
+    weakness: ["weakness", "weakpoint", "弱み", "短所", "苦手なこと"],
+    howKnowCompany: ["howknow", "きっかけ", "知ったきっかけ", "何で知った", "媒体", "就職サイト", "ナビサイト"],
+    internshipExperience: ["internship", "event", "説明会", "インターン", "イベント", "参加したこと"],
+    verificationCode: ["verificationcode", "authcode", "onetimecode", "one-time-code", "確認コード", "認証コード", "6桁の半角数字"],
     password: ["password", "passwd", "pass", "pw", "newpassword", "パスワード"]
   };
 
@@ -150,6 +181,68 @@
     return s.length === 1 ? `0${s}` : s;
   }
 
+  function choiceTokens(value) {
+    return String(value || "")
+      .split(/[,、\n/／・;；\s]+/)
+      .map((item) => normalize(item))
+      .filter(Boolean);
+  }
+
+  function customAnswerMap(profile) {
+    const lines = String(profile.customAnswers || "").split(/\r?\n/);
+    return lines
+      .map((line) => {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith("#")) return null;
+        const index = trimmed.search(/[=:：＝]/);
+        if (index < 0) return null;
+        const key = trimmed.slice(0, index).trim();
+        const value = trimmed.slice(index + 1).trim();
+        if (!key || !value) return null;
+        return { key, normalizedKey: normalize(key), value };
+      })
+      .filter(Boolean)
+      .sort((a, b) => b.normalizedKey.length - a.normalizedKey.length);
+  }
+
+  function customAnswerFor(el, customAnswers) {
+    if (!customAnswers.length) return "";
+    const ctx = fieldContext(el);
+    const found = customAnswers.find((item) => item.normalizedKey.length >= 2 && ctx.includes(item.normalizedKey));
+    return found?.value || "";
+  }
+
+  function optionMatches(raw, wanted, field = "") {
+    const option = normalize(raw);
+    const value = normalize(wanted);
+    const tokens = choiceTokens(wanted);
+    if (!option || /選択|未選択|指定なし|choose|select/.test(option)) return false;
+    if (option === value || tokens.includes(option)) return true;
+    if ((value === "true" || value === "yes" || value === "同意" || value === "同意する") && /同意|承諾|確認|agree|accept|はい|yes/.test(option)) return true;
+    if ((value === "false" || value === "no" || value === "なし" || value === "無") && /なし|無|いいえ|no|該当なし|経験なし/.test(option)) return true;
+    if ((field === "gender" || field === "driverLicense" || field === "humanitiesScience") && tokens.some((token) => option.includes(token) || token.includes(option))) return true;
+    if (value.length >= 2 && (option.includes(value) || value.includes(option))) return true;
+    return tokens.some((token) => token.length >= 2 && (option.includes(token) || token.includes(option)));
+  }
+
+  function numericOptions(select) {
+    return Array.from(select.options)
+      .map((option) => String(option.value || option.text || "").replace(/\D/g, ""))
+      .filter(Boolean)
+      .map(Number);
+  }
+
+  function selectNumberKind(select) {
+    const nums = numericOptions(select);
+    if (!nums.length) return "";
+    const max = Math.max(...nums);
+    const min = Math.min(...nums);
+    if (max >= 1900 && min >= 1900) return "year";
+    if (min >= 1 && max <= 12) return "month";
+    if (min >= 1 && max <= 31) return "day";
+    return "";
+  }
+
   function fieldContext(el) {
     const id = el.id ? CSS.escape(el.id) : "";
     const explicit = id ? document.querySelector(`label[for="${id}"]`)?.innerText || "" : "";
@@ -185,35 +278,102 @@
     ].join(" "));
   }
 
+  function fieldLabel(el) {
+    const id = el.id ? CSS.escape(el.id) : "";
+    const explicit = id ? document.querySelector(`label[for="${id}"]`)?.innerText || "" : "";
+    const label = el.closest("label")?.innerText || "";
+    const dt = el.closest("dd")?.previousElementSibling?.innerText || "";
+    const th = el.closest("td")?.previousElementSibling?.innerText || el.closest("tr")?.querySelector("th")?.innerText || "";
+    const placeholder = el.placeholder || "";
+    const name = el.name || el.id || "";
+    return [name, placeholder, explicit, label, dt, th]
+      .filter(Boolean)
+      .join(" / ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 120);
+  }
+
+  function fieldCaption(el) {
+    const id = el.id ? CSS.escape(el.id) : "";
+    const explicit = id ? document.querySelector(`label[for="${id}"]`)?.innerText || "" : "";
+    const label = el.closest("label")?.innerText || "";
+    const dt = el.closest("dd")?.previousElementSibling?.innerText || "";
+    const th = el.closest("td")?.previousElementSibling?.innerText || el.closest("tr")?.querySelector("th")?.innerText || "";
+    const groupLabel = el.closest("[role=group], fieldset, .form-group, .field, .field-row, .inputBox, .formItem")?.querySelector("legend, .label, .title, .form-label, .field-label")?.innerText || "";
+    return normalize([explicit, label, dt, th, groupLabel].filter(Boolean).join(" "));
+  }
+
+  function indexAmongSameCaption(el, selector) {
+    const caption = fieldCaption(el);
+    if (!caption) return -1;
+    const controls = getFillableFields().filter((other) => (
+      other.matches(selector) && fieldCaption(other) === caption
+    ));
+    return controls.indexOf(el);
+  }
+
   function detectField(el) {
     const ctx = fieldContext(el);
     const rawName = normalize(el.name || el.id);
     const placeholder = normalize(el.placeholder || "");
+    const labelCtx = normalize(fieldLabel(el));
+    const allCtx = `${ctx} ${labelCtx}`;
     const autocomplete = normalize((el.autocomplete || "").split(/\s+/).pop());
     const type = String(el.type || "").toLowerCase();
 
+    if (/recaptcha|g-recaptcha|languagecheck/.test(rawName)) return "";
+    if (/確認コード|認証コード|verificationcode|authcode|onetimecode|6桁/.test(allCtx + rawName)) return "verificationCode";
+    if (/^local\.?email$/.test(rawName)) return "emailConfirm";
+    if (/もう一度|再入力|確認/.test(allCtx) && /local\.?email|email|mail|メール/.test(rawName + allCtx)) return "emailConfirm";
     if (AUTOCOMPLETE_FIELDS[autocomplete]) return AUTOCOMPLETE_FIELDS[autocomplete];
-    if (type === "checkbox" && /terms|consent|agree|agreement|policy|privacy|kiyaku|規約|同意|個人情報/.test(rawName + ctx) && !/現住所と同じ|帰省先/.test(ctx)) return "";
-    if (type === "email") return /confirm|confirmation|確認|再入力/.test(ctx) ? "emailConfirm" : "email";
+    if (/^(adch|cbxkflg)$/.test(rawName) || /現住所と同じ|帰省先は現住所/.test(allCtx)) return "holidaySame";
+    if (type === "checkbox" && /privacy|個人情報|プライバシー|取り扱い/.test(rawName + allCtx) && !/現住所と同じ|帰省先/.test(allCtx)) return "privacyConsent";
+    if (type === "checkbox" && /terms|consent|agree|agreement|policy|kiyaku|規約|同意|利用条件/.test(rawName + allCtx) && !/現住所と同じ|帰省先/.test(allCtx)) return "termsConsent";
+    if (type === "email") return /confirm|confirmation|確認|再入力|もう一度/.test(allCtx) ? "emailConfirm" : "email";
     if (placeholder === "姓") return "lastName";
     if (placeholder === "名") return "firstName";
     if (placeholder === "セイ") return "lastNameKana";
     if (placeholder === "メイ") return "firstNameKana";
+    if (el.tagName === "SELECT" && /生年月日|誕生日|birthday|birth/.test(allCtx)) {
+      const kind = selectNumberKind(el);
+      if (kind === "year") return "birthYear";
+      if (kind === "month") return "birthMonth";
+      if (kind === "day") return "birthDay";
+      const index = indexAmongSameCaption(el, "select");
+      if (index === 0) return "birthYear";
+      if (index === 1) return "birthMonth";
+      if (index === 2) return "birthDay";
+    }
+    if (el.tagName === "SELECT" && /取得年月|取得日|取得時期/.test(allCtx)) {
+      const kind = selectNumberKind(el);
+      if (kind === "year") return "degreeYear";
+      if (kind === "month") return "degreeMonth";
+      const index = indexAmongSameCaption(el, "select");
+      if (index === 0) return "degreeYear";
+      if (index === 1) return "degreeMonth";
+    }
 
     if (/password|passwd|pass|pwd|pw/.test(rawName)) return "password";
     if (/^(tbxsmailr|account4|domain4)$/.test(rawName) || /submail.*r|smail.*r|サブメール.*再入力/.test(ctx)) return "subEmailConfirm";
     if (/^(tbxsmail|account3|domain3)$/.test(rawName) || /submail|smail|サブメール/.test(ctx)) return "subEmail";
-    if (/^(tbxmailr|account2|domain2)$/.test(rawName) || /mail.*r|メール.*再入力/.test(ctx)) return "emailConfirm";
+    if (/^(tbxmailr|account2|domain2)$/.test(rawName) || /mail.*r|メール.*再入力|メール.*もう一度|もう一度.*メール/.test(ctx)) return "emailConfirm";
+    if (/confirm|confirmation|確認|再入力|もう一度/.test(allCtx) && /メール|mail|email/.test(rawName + allCtx)) return "emailConfirm";
     if (/^(tbxmail|account1|domain1|email|mail|localemail)$/.test(rawName) || /メインメール/.test(ctx)) return "email";
-    if (/confirm|confirmation|確認|再入力/.test(ctx) && /メール|mail|email/.test(ctx)) return "emailConfirm";
     if (/携帯|mobile|cell/.test(ctx) && /電話|tel|phone|番号/.test(ctx)) return "mobilePhone";
     if (/郵便番号|postal|zipcode|zip/.test(ctx) && !/[12]$/.test(rawName)) return "postalCode";
     if (/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) {
+      if (/_?d1$/.test(rawName)) return "lastNameKana";
+      if (/_?d2$/.test(rawName)) return "firstNameKana";
       if (/1$|kanasei|yname1|sei|last|family/.test(rawName)) return "lastNameKana";
       if (/2$|kanana|yname2|mei|first|given/.test(rawName)) return "firstNameKana";
       if (/フリガナ姓|カナ氏名姓|セイ/.test(ctx)) return "lastNameKana";
       if (/フリガナ名|カナ氏名名|メイ/.test(ctx)) return "firstNameKana";
       return "fullNameKana";
+    }
+    if (/氏名|お名前|名前|fullname|full_name/.test(ctx) && !/kana|カナ|かな|ふりがな|フリガナ|学校|大学|会社|保護者|郵便|住所|電話|メール/.test(ctx)) {
+      if (/_?d1$/.test(rawName)) return "lastName";
+      if (/_?d2$/.test(rawName)) return "firstName";
     }
     if (/name1$|kanjisei|kname1|sei|last|family|surname/.test(rawName) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "lastName";
     if (/name2$|kanjina|kname2|mei|first|given/.test(rawName) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "firstName";
@@ -224,6 +384,8 @@
     if (/gken|ddlken|prefecture|pref|addresslevel1/.test(rawName)) return "prefecture";
     if (/gadrs1|tbxaddr1|addr1|address1|addressline1/.test(rawName)) return "address1";
     if (/gadrs2|tbxaddr2|addr2|address2|addressline2/.test(rawName)) return "address2";
+    if (type !== "checkbox" && /建物|マンション|アパート|部屋|building|apartment|クロスタワー/.test(allCtx)) return "address2";
+    if (type !== "checkbox" && /住所|address|市区町村|市区郡|番地|丁目|東京都|渋谷区/.test(allCtx)) return "address1";
     if (/kttel1|tbxkeitai1|mobile1|cell1/.test(rawName)) return "mobileTel1";
     if (/kttel2|tbxkeitai2|mobile2|cell2/.test(rawName)) return "mobileTel2";
     if (/kttel3|tbxkeitai3|mobile3|cell3/.test(rawName)) return "mobileTel3";
@@ -233,6 +395,13 @@
     if (/syear|ddlsotsuyy|graduationyear|gradyear/.test(rawName)) return "gradYear";
     if (/smonth|ddlsotsuym|graduationmonth|gradmonth/.test(rawName)) return "gradMonth";
     if (/shikbn|ddlsotsuk|graduationstatus|gradstatus/.test(rawName)) return "gradStatus";
+    if (/学位|課程|degree/.test(allCtx + rawName)) return "degree";
+    if (/在留資格|residencestatus|visa|statusofresidence/.test(allCtx + rawName)) return "residenceStatus";
+    if (/国籍|nationality/.test(allCtx + rawName)) return "nationality";
+    if (/就労資格|就労可否|就労可能|workauthorization/.test(allCtx + rawName)) return "workAuthorization";
+    if (/留学|海外経験|studyabroad|overseas/.test(allCtx + rawName)) return "studyAbroad";
+    if (/障がい|障害|配慮事項|disability/.test(allCtx + rawName)) return "disabilityStatus";
+    if (/職歴|勤務先|職務経歴|employment|workhistory|jobhistory|cjob/.test(allCtx + rawName)) return "employmentHistory";
 
     for (const [field, aliases] of Object.entries(FIELD_ALIASES)) {
       if (aliases.some((alias) => {
@@ -247,24 +416,31 @@
       if (field === "password") continue;
       if (aliases.some((alias) => {
         const normalizedAlias = normalize(alias);
-        return normalizedAlias.length >= 2 && ctx.includes(normalizedAlias);
+        return normalizedAlias.length >= 2 && allCtx.includes(normalizedAlias);
       })) return field;
     }
 
     if (/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) {
+      if (/_?d1$/.test(rawName)) return "lastNameKana";
+      if (/_?d2$/.test(rawName)) return "firstNameKana";
       if (/1$|kanasei|yname1|sei|last|family/.test(rawName)) return "lastNameKana";
       if (/2$|kanana|yname2|mei|first|given/.test(rawName)) return "firstNameKana";
       if (/フリガナ姓|カナ氏名姓|セイ/.test(ctx)) return "lastNameKana";
       if (/フリガナ名|カナ氏名名|メイ/.test(ctx)) return "firstNameKana";
       return "fullNameKana";
     }
+    if (/氏名|お名前|名前|fullname|full_name/.test(ctx) && !/kana|カナ|かな|ふりがな|フリガナ|学校|大学|会社|保護者|郵便|住所|電話|メール/.test(ctx)) {
+      if (/_?d1$/.test(rawName)) return "lastName";
+      if (/_?d2$/.test(rawName)) return "firstName";
+    }
     if (/name1$|kanjisei|kname1|sei|last|family|surname/.test(rawName) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "lastName";
     if (/name2$|kanjina|kname2|mei|first|given/.test(rawName) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "firstName";
     if (/氏名姓|漢字氏名姓|お名前姓/.test(ctx) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "lastName";
     if (/氏名名|漢字氏名名|お名前名/.test(ctx) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "firstName";
-    if (/氏名|お名前|名前|fullname|full_name/.test(ctx) && !/学校|大学|会社|保護者|郵便|住所|電話|メール/.test(ctx)) return "fullName";
-    if (/住所|address/.test(ctx) && !/メール|mail|email/.test(ctx)) return "fullAddress";
-    if (/電話|tel|phone/.test(ctx)) return "phone";
+    if (/氏名|お名前|名前|fullname|full_name/.test(allCtx) && !/学校|大学|会社|保護者|郵便|住所|電話|メール/.test(allCtx)) return "fullName";
+    if (/希望記入欄|希望欄|備考|連絡希望|連絡事項/.test(allCtx)) return "requestNote";
+    if (/住所|address/.test(allCtx) && !/メール|mail|email/.test(allCtx)) return "fullAddress";
+    if (/電話|tel|phone/.test(allCtx)) return "phone";
     return "";
   }
 
@@ -312,6 +488,37 @@
       schoolName: profile.schoolName,
       faculty: profile.faculty,
       department: profile.department,
+      schoolType: profile.schoolType,
+      degree: profile.degree,
+      degreeYear: profile.degreeYear || profile.gradYear,
+      degreeMonth: two(profile.degreeMonth || profile.gradMonth),
+      humanitiesScience: profile.humanitiesScience,
+      seminar: profile.seminar,
+      researchTheme: profile.researchTheme,
+      club: profile.club,
+      qualification: profile.qualification,
+      driverLicense: profile.driverLicense,
+      toeic: profile.toeic,
+      desiredJob: profile.desiredJob,
+      desiredLocation: profile.desiredLocation,
+      requestNote: profile.requestNote,
+      termsConsent: profile.termsConsent,
+      privacyConsent: profile.privacyConsent,
+      nationality: profile.nationality,
+      residenceStatus: profile.residenceStatus,
+      workAuthorization: profile.workAuthorization,
+      studyAbroad: profile.studyAbroad,
+      disabilityStatus: profile.disabilityStatus,
+      employmentHistory: profile.employmentHistory,
+      noAnswer: profile.noAnswer,
+      motivation: profile.motivation,
+      selfPr: profile.selfPr,
+      studentEffort: profile.studentEffort,
+      strengths: profile.strengths,
+      weakness: profile.weakness,
+      howKnowCompany: profile.howKnowCompany,
+      internshipExperience: profile.internshipExperience,
+      verificationCode: profile.verificationCode,
       password: profile.password,
       account1: email.account,
       domain1: email.domain,
@@ -326,6 +533,24 @@
 
   function valueFor(el, field, values) {
     const key = normalize(el.name || el.id);
+    if (/_?d1$/.test(key)) {
+      if (field === "fullName") return values.lastName;
+      if (field === "fullNameKana") return values.lastNameKana;
+      if (field === "phone") return values.homeTel1 || splitPhone(values.phone)[0];
+      if (field === "mobilePhone") return values.mobileTel1;
+      if (field === "postalCode") return values.postal1;
+    }
+    if (/_?d2$/.test(key)) {
+      if (field === "fullName") return values.firstName;
+      if (field === "fullNameKana") return values.firstNameKana;
+      if (field === "phone") return values.homeTel2 || splitPhone(values.phone)[1];
+      if (field === "mobilePhone") return values.mobileTel2;
+      if (field === "postalCode") return values.postal2;
+    }
+    if (/_?d3$/.test(key)) {
+      if (field === "phone") return values.homeTel3 || splitPhone(values.phone)[2];
+      if (field === "mobilePhone") return values.mobileTel3;
+    }
     if (values[key] !== undefined) return values[key];
     return values[field];
   }
@@ -354,7 +579,8 @@
           return (value.includes("見込み") && text.includes("卒業予定")) || (value.includes("予定") && text.includes("見込み"));
         })
       : null;
-    const found = exact || padded || numeric || pref || graduation;
+    const fuzzy = options.find((option) => optionMatches(`${option.text} ${option.value}`, wanted, field));
+    const found = exact || padded || numeric || pref || graduation || fuzzy;
     if (!found) return false;
     select.value = found.value;
     select.dispatchEvent(new Event("input", { bubbles: true }));
@@ -371,7 +597,7 @@
       ((wanted === "male" || wanted === "男性" || wanted === "男") && /male|男性|男|sex1|cd1|rbtsex1/.test(raw) ||
         (wanted === "female" || wanted === "女性" || wanted === "女") && /female|女性|女|sex2|cd2|rbtsex2/.test(raw) ||
         (wanted === "none" || wanted === "無回答") && /無回答|none|sex3|rbtsex3/.test(raw));
-    if (!genderMatch && raw !== wanted) return false;
+    if (!genderMatch && raw !== wanted && !optionMatches(raw, value, field)) return false;
     el.checked = true;
     el.dispatchEvent(new Event("input", { bubbles: true }));
     el.dispatchEvent(new Event("change", { bubbles: true }));
@@ -380,27 +606,39 @@
 
   function fill(profile, options = {}) {
     const values = profileValues(profile);
+    const customAnswers = customAnswerMap(profile);
     const overwrite = options.overwrite !== false;
     const fields = getFillableFields();
     const matches = [];
     const skipped = [];
+    const completedRadioGroups = new Set();
 
     for (const el of fields) {
       const field = detectField(el);
-      if (!field) continue;
-      const wanted = valueFor(el, field, values);
+      const wanted = field ? valueFor(el, field, values) : customAnswerFor(el, customAnswers);
       if (wanted === undefined || wanted === null || wanted === "") continue;
+      const effectiveField = field || "customAnswer";
+      const radioGroupKey = el.type === "radio" ? `${effectiveField}:${el.name || el.id || effectiveField}` : "";
+      if (radioGroupKey && completedRadioGroups.has(radioGroupKey)) continue;
       if (!overwrite && el.value && el.type !== "radio" && el.type !== "checkbox") {
-        skipped.push({ field, name: el.name || el.id, reason: "already-filled" });
+        skipped.push({ field: effectiveField, name: el.name || el.id, reason: "already-filled" });
         continue;
       }
 
       let ok = false;
-      if (el.tagName === "SELECT") ok = selectByTextOrValue(el, wanted, field);
-      else if (el.type === "radio") ok = setRadio(el, field, wanted);
+      if (el.tagName === "SELECT") ok = selectByTextOrValue(el, wanted, effectiveField);
+      else if (el.type === "radio") ok = setRadio(el, effectiveField, wanted);
       else if (el.type === "checkbox") {
-        if (field === "holidaySame") {
-          el.checked = Boolean(wanted);
+        if (["holidaySame", "termsConsent", "privacyConsent"].includes(effectiveField)) {
+          const shouldCheck = Boolean(wanted);
+          if (el.checked !== shouldCheck) el.click();
+          el.checked = shouldCheck;
+          el.dispatchEvent(new Event("input", { bubbles: true }));
+          el.dispatchEvent(new Event("change", { bubbles: true }));
+          ok = true;
+        } else if (optionMatches([el.value, el.id, el.closest("label")?.innerText || el.closest("span,td,div")?.innerText || ""].join(" "), wanted, effectiveField)) {
+          el.checked = true;
+          el.dispatchEvent(new Event("input", { bubbles: true }));
           el.dispatchEvent(new Event("change", { bubbles: true }));
           ok = true;
         }
@@ -409,8 +647,11 @@
         ok = true;
       }
 
-      if (ok) matches.push({ field, name: el.name || el.id, tag: el.tagName.toLowerCase() });
-      else skipped.push({ field, name: el.name || el.id, reason: "no-option" });
+      if (ok) {
+        if (radioGroupKey) completedRadioGroups.add(radioGroupKey);
+        matches.push({ field: effectiveField, name: el.name || el.id, tag: el.tagName.toLowerCase() });
+      }
+      else skipped.push({ field: effectiveField, name: el.name || el.id, reason: "no-option" });
     }
 
     return { matched: matches.length, skipped: skipped.length, matches, skipped, url: location.href, platform: platform() };
@@ -419,6 +660,8 @@
   function getFillableFields() {
     return Array.from(document.querySelectorAll("input, select, textarea")).filter((el) => {
       const type = String(el.type || "").toLowerCase();
+      const name = normalize(el.name || el.id);
+      if (/recaptcha|g-recaptcha|languagecheck/.test(name)) return false;
       return !["hidden", "submit", "button", "image", "reset", "file"].includes(type) && !el.disabled && !el.readOnly;
     });
   }
@@ -435,8 +678,11 @@
   function scan() {
     const fields = getFillableFields();
     const detected = fields
-      .map((el) => ({ field: detectField(el), name: el.name || el.id, type: el.type || el.tagName.toLowerCase() }))
+      .map((el) => ({ field: detectField(el), name: el.name || el.id, label: fieldLabel(el), type: el.type || el.tagName.toLowerCase() }))
       .filter((item) => item.field);
+    const unknownFields = fields
+      .map((el) => ({ field: detectField(el), name: el.name || el.id, label: fieldLabel(el), type: el.type || el.tagName.toLowerCase() }))
+      .filter((item) => !item.field);
     return {
       platform: platform(),
       title: document.title,
@@ -444,6 +690,8 @@
       fields: fields.length,
       detected: detected.length,
       detectedFields: detected.slice(0, 80),
+      unknown: unknownFields.length,
+      unknownFields: unknownFields.slice(0, 40),
       entryCandidates: findEntryCandidates()
     };
   }

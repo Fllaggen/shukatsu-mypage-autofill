@@ -148,7 +148,8 @@ label:last-child {
 }
 
 input,
-select {
+select,
+textarea {
   width: 100%;
   min-height: 32px;
   margin-top: 4px;
@@ -158,6 +159,12 @@ select {
   background: #ffffff;
   color: var(--ink);
   font: inherit;
+}
+
+textarea {
+  min-height: 70px;
+  resize: vertical;
+  line-height: 1.45;
 }
 
 input[type="checkbox"] {

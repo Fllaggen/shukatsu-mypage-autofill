@@ -96,10 +96,64 @@
           <label>学部<input data-key="faculty"></label>
           <label>学科・専攻<input data-key="department"></label>
         </div>
+        <div class="grid two">
+          <label>学校区分<input data-key="schoolType" placeholder="大学"></label>
+          <label>文理区分<input data-key="humanitiesScience" placeholder="文系"></label>
+        </div>
+        <div class="grid two">
+          <label>学位<input data-key="degree" placeholder="学士"></label>
+          <label>学位取得年<input data-key="degreeYear" placeholder="2027"></label>
+        </div>
+        <label>学位取得月<input data-key="degreeMonth" placeholder="03"></label>
+        <label>ゼミ・研究室<input data-key="seminar"></label>
+        <label>研究テーマ<input data-key="researchTheme"></label>
       </section>
 
       <section class="panel">
-        <h2>任意</h2>
+        <h2>経験・希望</h2>
+        <label>クラブ・サークル<input data-key="club"></label>
+        <label>資格・免許<textarea data-key="qualification" rows="3"></textarea></label>
+        <div class="grid two">
+          <label>運転免許<input data-key="driverLicense" placeholder="有"></label>
+          <label>TOEIC等<input data-key="toeic" placeholder="720"></label>
+        </div>
+        <div class="grid two">
+          <label>希望職種<input data-key="desiredJob"></label>
+          <label>希望勤務地<input data-key="desiredLocation"></label>
+        </div>
+        <label>希望・連絡事項<textarea data-key="requestNote" rows="3"></textarea></label>
+      </section>
+
+      <section class="panel">
+        <h2>確認・該当事項</h2>
+        <label class="check"><input data-key="termsConsent" type="checkbox">規約・利用条件に同意する</label>
+        <label class="check"><input data-key="privacyConsent" type="checkbox">個人情報の取り扱いに同意する</label>
+        <div class="grid two">
+          <label>国籍<input data-key="nationality" placeholder="日本"></label>
+          <label>在留資格<input data-key="residenceStatus" placeholder="日本国籍、永住者など"></label>
+        </div>
+        <label>就労資格<input data-key="workAuthorization" placeholder="就労可能"></label>
+        <label>留学経験<input data-key="studyAbroad" placeholder="なし"></label>
+        <label>障がい・配慮事項<input data-key="disabilityStatus" placeholder="なし"></label>
+        <label>職歴<textarea data-key="employmentHistory" rows="3" placeholder="なし"></textarea></label>
+        <label>該当なし用の回答<input data-key="noAnswer" placeholder="なし"></label>
+      </section>
+
+      <section class="panel">
+        <h2>よくある回答</h2>
+        <label>志望動機<textarea data-key="motivation" rows="4"></textarea></label>
+        <label>自己PR<textarea data-key="selfPr" rows="4"></textarea></label>
+        <label>学生時代に力を入れたこと<textarea data-key="studentEffort" rows="4"></textarea></label>
+        <label>強み<textarea data-key="strengths" rows="3"></textarea></label>
+        <label>弱み<textarea data-key="weakness" rows="3"></textarea></label>
+        <label>会社を知ったきっかけ<input data-key="howKnowCompany" placeholder="マイナビ、合同説明会など"></label>
+        <label>参加イベント・インターン<textarea data-key="internshipExperience" rows="3"></textarea></label>
+        <label>カスタム回答<textarea data-key="customAnswers" rows="5" placeholder="例&#10;第一希望職種=営業職&#10;留学経験=なし&#10;希望勤務地=東京"></textarea></label>
+      </section>
+
+      <section class="panel">
+        <h2>その他</h2>
+        <label>認証コード<input data-key="verificationCode" placeholder="メールで届いた6桁など"></label>
         <label>登録用パスワード<input data-key="password" type="password"></label>
       </section>
     </main>
