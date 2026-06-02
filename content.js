@@ -80,8 +80,21 @@
     motivation: ["motivation", "message", "志望動機", "志望理由", "応募理由", "入社理由", "応募先へのメッセージ", "メッセージ"],
     selfPr: ["selfpr", "自己pr", "自己PR", "自己ピーアール", "自己アピール"],
     studentEffort: ["gakuchika", "学生時代に力を入れたこと", "学生時代", "力を入れたこと", "打ち込んだこと", "取り組んだこと"],
+    studyDetail: ["studydetail", "academic", "学業で取り組んだこと", "学業への取り組み", "研究内容", "専攻内容", "学修内容", "学習内容", "卒業研究", "研究概要"],
     strengths: ["strength", "strongpoint", "強み", "長所", "得意なこと"],
     weakness: ["weakness", "weakpoint", "弱み", "短所", "苦手なこと"],
+    careerVision: ["careervision", "futurevision", "将来像", "将来の夢", "将来やりたいこと", "キャリアビジョン", "今後の目標", "入社後に実現したいこと"],
+    jobReason: ["jobreason", "occupationreason", "職種志望理由", "希望職種の理由", "職種を希望する理由", "希望する理由"],
+    industryInterest: ["industryinterest", "businessinterest", "業界に興味", "事業に興味", "興味を持った理由", "関心を持った理由", "業界志望理由"],
+    workValues: ["workvalues", "jobaxis", "就活の軸", "仕事選びの軸", "大切にしたいこと", "働く上で大切", "価値観"],
+    challengeExperience: ["challengeexperience", "challenge", "挑戦した経験", "チャレンジした経験", "困難に挑戦", "挑戦したこと"],
+    failureExperience: ["failureexperience", "failure", "setback", "失敗経験", "挫折経験", "失敗から学んだこと", "挫折から学んだこと", "困難を乗り越えた経験"],
+    teamworkExperience: ["teamworkexperience", "teamwork", "チームで取り組んだ", "チーム経験", "協働経験", "周囲と協力"],
+    leadershipExperience: ["leadershipexperience", "leadership", "リーダーシップ", "リーダー経験", "周囲を巻き込んだ経験"],
+    achievement: ["achievement", "成果", "実績", "表彰", "受賞", "達成したこと"],
+    languageSkills: ["languageskills", "language", "語学スキル", "語学力", "英語力", "外国語"],
+    programmingSkills: ["programmingskills", "itskills", "pcskills", "ITスキル", "PCスキル", "プログラミング", "使用できるツール"],
+    portfolioUrl: ["portfoliourl", "portfolio", "website", "github", "ポートフォリオ", "制作物", "成果物URL", "githuburl"],
     howKnowCompany: ["howknow", "きっかけ", "キッカケ", "知ったきっかけ", "知ったキッカケ", "何で知った", "媒体", "就職サイト", "ナビサイト"],
     internshipExperience: ["internship", "event", "説明会", "インターン", "イベント", "参加したこと"],
     loginId: ["loginid", "userid", "user_id", "accountid", "account_id", "ログインid", "ログインID", "マイページid", "マイページID"],
@@ -533,6 +546,19 @@
     if (/^i378$/.test(rawName) || /勤務期間|アルバイト期間/.test(allCtx)) return "employmentDuration";
     if (/紹介者名|社員からの紹介|教授からの紹介|その他.*詳細|その他を選択/.test(allCtx)) return "referralDetail";
     if (/転勤する可能性|転勤.*理解|転勤可能|転勤に同意/.test(allCtx)) return "relocationConsent";
+    if (/学業.*取り組|研究内容|専攻内容|学修内容|卒業研究|研究概要/.test(allCtx)) return "studyDetail";
+    if (/将来像|将来の夢|将来.*やりたい|キャリアビジョン|入社後.*実現|今後の目標/.test(allCtx)) return "careerVision";
+    if (/職種志望理由|希望職種.*理由|職種.*希望.*理由/.test(allCtx)) return "jobReason";
+    if (/業界.*興味|事業.*興味|業界志望理由|興味を持った理由|関心を持った理由/.test(allCtx)) return "industryInterest";
+    if (/就活の軸|仕事選びの軸|働く上で大切|大切にしたいこと|価値観/.test(allCtx)) return "workValues";
+    if (/挑戦した経験|チャレンジした経験|挑戦したこと|困難に挑戦/.test(allCtx)) return "challengeExperience";
+    if (/失敗経験|挫折経験|失敗から学んだ|挫折から学んだ|困難を乗り越えた/.test(allCtx)) return "failureExperience";
+    if (/チームで取り組|チーム経験|協働経験|周囲と協力/.test(allCtx)) return "teamworkExperience";
+    if (/リーダーシップ|リーダー経験|周囲を巻き込/.test(allCtx)) return "leadershipExperience";
+    if (/成果|実績|表彰|受賞|達成したこと/.test(allCtx) && !/研究成果物URL|成果物URL/.test(allCtx)) return "achievement";
+    if (/語学スキル|語学力|英語力|外国語/.test(allCtx)) return "languageSkills";
+    if (/ITスキル|PCスキル|プログラミング|使用できるツール|github/.test(allCtx)) return "programmingSkills";
+    if (/ポートフォリオ|制作物|成果物URL|github.*url|website|url/.test(allCtx) && /url|リンク|http|ポートフォリオ|github/.test(allCtx)) return "portfolioUrl";
 
     if (/^(tbxsmailr|account4|domain4)$/.test(rawName) || /submail.*r|smail.*r|サブメール.*再入力/.test(ctx)) return "subEmailConfirm";
     if (/^(tbxsmail|account3|domain3)$/.test(rawName) || /submail|smail|サブメール/.test(ctx)) return "subEmail";
@@ -574,6 +600,9 @@
     if (/syear|ddlsotsuyy|graduationyear|gradyear/.test(rawName)) return "gradYear";
     if (/smonth|ddlsotsuym|graduationmonth|gradmonth/.test(rawName)) return "gradMonth";
     if (/shikbn|ddlsotsuk|graduationstatus|gradstatus/.test(rawName)) return "gradStatus";
+    if (/cschoolshubetsu|schooltype|schoolkind/.test(rawName)) return "schoolType";
+    if (/cschoolkeito|schoolsystem|schoolfield|bunri/.test(rawName)) return "humanitiesScience";
+    if (/cschooltokubun|graduationdivision/.test(rawName)) return "gradStatus";
     if (/学位|課程|degree/.test(allCtx + rawName)) return "degree";
     if (/在留資格|residencestatus|visa|statusofresidence/.test(allCtx + rawName)) return "residenceStatus";
     if (/国籍|nationality/.test(allCtx + rawName)) return "nationality";
@@ -705,8 +734,21 @@
       motivation: profile.motivation,
       selfPr: profile.selfPr,
       studentEffort: profile.studentEffort,
+      studyDetail: profile.studyDetail,
       strengths: profile.strengths,
       weakness: profile.weakness,
+      careerVision: profile.careerVision,
+      jobReason: profile.jobReason,
+      industryInterest: profile.industryInterest,
+      workValues: profile.workValues,
+      challengeExperience: profile.challengeExperience,
+      failureExperience: profile.failureExperience,
+      teamworkExperience: profile.teamworkExperience,
+      leadershipExperience: profile.leadershipExperience,
+      achievement: profile.achievement,
+      languageSkills: profile.languageSkills,
+      programmingSkills: profile.programmingSkills,
+      portfolioUrl: profile.portfolioUrl,
       howKnowCompany: profile.howKnowCompany,
       internshipExperience: profile.internshipExperience,
       loginId: profile.loginId || profile.email,
@@ -925,12 +967,23 @@
       else skipped.push({ field: effectiveField, name: el.name || el.id, reason: "no-option" });
     }
 
+    const detected = fields
+      .map((el) => fieldInfo(el))
+      .filter((item) => item.field);
+    const unknownFields = fields
+      .map((el) => fieldInfo(el))
+      .filter((item) => !item.field);
     const remainingRequired = emptyRequiredFields();
     return {
+      fields: fields.length,
+      detected: detected.length,
+      detectedFields: detected.slice(0, 80),
+      unknown: unknownFields.length,
+      unknownFields: unknownFields.slice(0, 40),
       matched: matches.length,
       skipped: skipped.length,
+      skippedItems: skipped.slice(0, 40),
       matches,
-      skipped,
       remainingRequiredCount: remainingRequired.length,
       remainingRequired: remainingRequired.slice(0, 30),
       url: location.href,

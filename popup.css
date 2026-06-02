@@ -132,6 +132,103 @@ button.danger {
   color: var(--warn);
 }
 
+.review-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.review-head h2 {
+  margin-bottom: 0;
+}
+
+.review-head button {
+  min-height: 28px;
+  padding: 3px 9px;
+  font-size: 12px;
+}
+
+.review-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.review-chip {
+  padding: 3px 8px;
+  border: 1px solid #c8d7d0;
+  border-radius: 6px;
+  background: #eff8f4;
+  color: var(--accent-strong);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.review-chip.quiet {
+  border-color: var(--line);
+  background: #f8fafc;
+  color: var(--muted);
+}
+
+.review-section {
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+.review-section + .review-section {
+  margin-top: 10px;
+}
+
+.review-section h3 {
+  margin: 0 0 6px;
+  font-size: 12px;
+}
+
+.review-empty {
+  margin: 0;
+}
+
+.review-list {
+  display: grid;
+  gap: 5px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.review-list li {
+  display: grid;
+  gap: 2px;
+  padding: 6px 7px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fbfcfe;
+}
+
+.review-list li.warn {
+  border-color: #e4c47d;
+  background: #fff9ed;
+}
+
+.review-list li.danger {
+  border-color: #f1a7a0;
+  background: #fff5f4;
+}
+
+.review-list span {
+  color: var(--ink);
+  font-weight: 650;
+}
+
+.review-list small,
+.review-more {
+  color: var(--muted);
+  font-size: 11px;
+}
+
 .panel {
   padding: 12px;
   margin-bottom: 10px;

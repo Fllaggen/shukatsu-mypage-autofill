@@ -35,6 +35,15 @@
 
       <section id="status" class="status" aria-live="polite"></section>
 
+      <section id="review" class="panel review" hidden>
+        <div class="review-head">
+          <h2>入力後レビュー</h2>
+          <button id="clearReview" type="button">閉じる</button>
+        </div>
+        <div id="reviewSummary" class="review-summary"></div>
+        <div id="reviewBody"></div>
+      </section>
+
       <section class="panel">
         <h2>名前</h2>
         <div class="grid two">
@@ -177,8 +186,23 @@
         <label>志望動機<textarea data-key="motivation" rows="4"></textarea></label>
         <label>自己PR<textarea data-key="selfPr" rows="4"></textarea></label>
         <label>学生時代に力を入れたこと<textarea data-key="studentEffort" rows="4"></textarea></label>
+        <label>研究・学業で取り組んだ内容<textarea data-key="studyDetail" rows="4"></textarea></label>
         <label>強み<textarea data-key="strengths" rows="3"></textarea></label>
         <label>弱み<textarea data-key="weakness" rows="3"></textarea></label>
+        <label>キャリアビジョン<textarea data-key="careerVision" rows="3" placeholder="将来どんな仕事をしたいか"></textarea></label>
+        <label>職種志望理由<textarea data-key="jobReason" rows="3" placeholder="その職種を希望する理由"></textarea></label>
+        <label>業界・事業に興味を持った理由<textarea data-key="industryInterest" rows="3"></textarea></label>
+        <label>働く上で大切にしたいこと<textarea data-key="workValues" rows="3"></textarea></label>
+        <label>挑戦した経験<textarea data-key="challengeExperience" rows="3"></textarea></label>
+        <label>失敗・挫折から学んだこと<textarea data-key="failureExperience" rows="3"></textarea></label>
+        <label>チームで取り組んだ経験<textarea data-key="teamworkExperience" rows="3"></textarea></label>
+        <label>リーダーシップ経験<textarea data-key="leadershipExperience" rows="3"></textarea></label>
+        <label>成果・実績<textarea data-key="achievement" rows="3"></textarea></label>
+        <div class="grid two">
+          <label>語学スキル<input data-key="languageSkills" placeholder="英語: 日常会話、TOEIC 720 など"></label>
+          <label>IT・プログラミングスキル<input data-key="programmingSkills" placeholder="Excel、Python、JavaScript など"></label>
+        </div>
+        <label>ポートフォリオURL<input data-key="portfolioUrl" type="url" placeholder="https://..."></label>
         <label>会社を知ったきっかけ<input data-key="howKnowCompany" placeholder="マイナビ、合同説明会など"></label>
         <label>参加イベント・インターン<textarea data-key="internshipExperience" rows="3"></textarea></label>
         <label>カスタム回答<textarea data-key="customAnswers" rows="5" placeholder="例&#10;第一希望職種=営業職&#10;留学経験=なし&#10;希望勤務地=東京"></textarea></label>
