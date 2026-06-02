@@ -1075,8 +1075,14 @@
       el.dispatchEvent(new Event("change", { bubbles: true }));
       return true;
     }
+    const customSelect = isCustomSelectInput(el);
     const customOk = await setCustomSelectInput(el, wanted, field);
     if (customOk) return true;
+    if (customSelect) {
+      const root = customSelectRoot(el);
+      const canType = el.getAttribute("inputmode") !== "none" && !/v-select--single/.test(String(root.className || ""));
+      if (!canType) return false;
+    }
     setNativeValue(el, wanted);
     return true;
   }
@@ -1221,6 +1227,14 @@
     await applyPlatformSpecificFinalValues(values, matches);
 
     const currentFields = getFillableFields();
+    const unresolvedSkipped = skipped.filter((item) => {
+      const el = currentFields.find((candidate) =>
+        (candidate.name || candidate.id) === item.name && (detectField(candidate) || "customAnswer") === item.field
+      );
+      if (!el) return true;
+      if (hasFieldValue(el)) return false;
+      return item.field === "customAnswer" || isRequiredField(el);
+    });
     const detected = currentFields
       .map((el) => fieldInfo(el))
       .filter((item) => item.field);
@@ -1235,8 +1249,9 @@
       unknown: unknownFields.length,
       unknownFields: unknownFields.slice(0, 40),
       matched: matches.length,
-      skipped: skipped.length,
-      skippedItems: skipped.slice(0, 40),
+      skipped: unresolvedSkipped.length,
+      skippedItems: unresolvedSkipped.slice(0, 40),
+      attemptedSkipped: skipped.length,
       matches,
       remainingRequiredCount: remainingRequired.length,
       remainingRequired: remainingRequired.slice(0, 30),
