@@ -163,6 +163,8 @@
   ];
 
   const PLATFORM_ENTRY_HINT = /mycareerbox|mcbox|mcid|openes|e2r|e2rpro|jobsuite|job-suite|freshers|hitolink|hito-link|hrmos|sonar|snar|accessonline|access-online|aol|axol/i;
+  const HIGHLIGHT_STYLE_ID = "shukatsu-autofill-highlight-style";
+  const HIGHLIGHT_ATTR = "data-shukatsu-autofill-highlight";
 
   function normalize(value) {
     return String(value || "")
@@ -362,6 +364,76 @@
       .replace(/\s+/g, " ")
       .trim()
       .slice(0, 180);
+  }
+
+  function fieldInfo(el) {
+    return {
+      field: detectField(el),
+      name: el.name || el.id,
+      label: debugLabel(el),
+      type: el.type || el.tagName.toLowerCase()
+    };
+  }
+
+  function isRequiredField(el) {
+    const ctx = `${fieldLabel(el)} ${fieldContext(el)}`;
+    return Boolean(el.required || el.getAttribute("aria-required") === "true" || /必須|required/.test(ctx));
+  }
+
+  function hasFieldValue(el) {
+    const type = String(el.type || "").toLowerCase();
+    if (type === "checkbox" || type === "radio") {
+      const name = el.name;
+      if (name) return Array.from(document.querySelectorAll(`input[type="${type}"][name="${CSS.escape(name)}"]`)).some((item) => item.checked);
+      return el.checked;
+    }
+    if (el.tagName === "SELECT") {
+      const selected = el.options[el.selectedIndex];
+      return Boolean(el.value && selected && !/選択|未選択|指定なし|choose|select/.test(normalize(selected.text || selected.value)));
+    }
+    return Boolean(String(el.value || "").trim());
+  }
+
+  function requiredChoiceGroupKey(el) {
+    const type = String(el.type || "").toLowerCase();
+    const rowText = (el.closest("tr, fieldset, [role=group], .form-group, .field, .field-row, .inputBox, .formItem, section")?.innerText || "")
+      .replace(/\s+/g, " ")
+      .trim();
+    return [
+      type,
+      detectField(el) || "unknown",
+      normalize(rowText).slice(0, 140) || fieldCaption(el) || el.name || debugLabel(el)
+    ].join(":");
+  }
+
+  function emptyRequiredFields() {
+    const missing = [];
+    const choiceGroups = new Map();
+
+    for (const el of getFillableFields()) {
+      if (!isRequiredField(el)) continue;
+      const type = String(el.type || "").toLowerCase();
+      if (type === "checkbox" || type === "radio") {
+        const key = requiredChoiceGroupKey(el);
+        const group = choiceGroups.get(key) || [];
+        group.push(el);
+        choiceGroups.set(key, group);
+      } else if (!hasFieldValue(el)) {
+        missing.push(fieldInfo(el));
+      }
+    }
+
+    for (const group of choiceGroups.values()) {
+      if (!group.some((el) => el.checked)) missing.push(fieldInfo(group[0]));
+    }
+
+    const seen = new Set();
+    return missing.filter((item) => {
+      const key = `${item.type}:${item.name}:${item.label}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
   }
 
   function fieldCaption(el) {
@@ -691,6 +763,69 @@
     else el.value = value;
     el.dispatchEvent(new Event("input", { bubbles: true }));
     el.dispatchEvent(new Event("change", { bubbles: true }));
+    if (el.getAttribute("role") === "combobox" || el.getAttribute("aria-label") === "Open" || el.getAttribute("title") === "Open") {
+      el.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", code: "Enter", bubbles: true }));
+      el.dispatchEvent(new KeyboardEvent("keyup", { key: "Enter", code: "Enter", bubbles: true }));
+    }
+    el.dispatchEvent(new Event("blur", { bubbles: true }));
+  }
+
+  function wait(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  function isVisible(el) {
+    const style = getComputedStyle(el);
+    const rect = el.getBoundingClientRect();
+    return style.visibility !== "hidden" && style.display !== "none" && rect.width > 0 && rect.height > 0;
+  }
+
+  function isCustomSelectInput(el) {
+    if (el.tagName !== "INPUT") return false;
+    const ctx = `${el.getAttribute("role") || ""} ${el.getAttribute("aria-label") || ""} ${el.getAttribute("title") || ""} ${el.getAttribute("inputmode") || ""} ${el.closest(".v-select, .ats-select, [role=combobox]")?.className || ""}`;
+    return /combobox|Open|none|v-select|ats-select/.test(ctx);
+  }
+
+  async function setCustomSelectInput(el, wanted, field = "") {
+    if (!isCustomSelectInput(el)) return false;
+    el.focus();
+    el.click();
+    await wait(120);
+    const proto = HTMLInputElement.prototype;
+    const setter = Object.getOwnPropertyDescriptor(proto, "value")?.set;
+    if (setter) setter.call(el, wanted);
+    else el.value = wanted;
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+    el.dispatchEvent(new Event("change", { bubbles: true }));
+    await wait(180);
+
+    const optionSelectors = [
+      "[role=option]",
+      ".v-list-item",
+      ".v-list-item-title",
+      ".v-list-item__content",
+      ".v-overlay .v-list *",
+      ".menuable__content__active *",
+      "li"
+    ].join(",");
+    const options = Array.from(document.querySelectorAll(optionSelectors))
+      .filter((option) => isVisible(option))
+      .map((option) => ({
+        el: option.closest("[role=option], .v-list-item, li") || option,
+        text: (option.innerText || option.textContent || "").replace(/\s+/g, " ").trim()
+      }))
+      .filter((option) => option.text);
+    const found = options.find((option) => optionMatches(option.text, wanted, field));
+    if (found) {
+      found.el.click();
+      await wait(120);
+    } else {
+      el.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", code: "Enter", bubbles: true }));
+      el.dispatchEvent(new KeyboardEvent("keyup", { key: "Enter", code: "Enter", bubbles: true }));
+      await wait(80);
+    }
+    el.dispatchEvent(new Event("blur", { bubbles: true }));
+    return hasFieldValue(el);
   }
 
   function selectByTextOrValue(select, wanted, field = "") {
@@ -726,13 +861,14 @@
         (wanted === "female" || wanted === "女性" || wanted === "女") && /female|女性|女|sex2|cd2|rbtsex2/.test(raw) ||
         (wanted === "none" || wanted === "無回答") && /無回答|none|sex3|rbtsex3/.test(raw));
     if (!genderMatch && raw !== wanted && !optionMatches(raw, value, field)) return false;
+    if (!el.checked) el.click();
     el.checked = true;
     el.dispatchEvent(new Event("input", { bubbles: true }));
     el.dispatchEvent(new Event("change", { bubbles: true }));
     return true;
   }
 
-  function fill(profile, options = {}) {
+  async function fill(profile, options = {}) {
     const values = profileValues(profile);
     const customAnswers = customAnswerMap(profile);
     const overwrite = options.overwrite !== false;
@@ -766,6 +902,7 @@
           el.dispatchEvent(new Event("change", { bubbles: true }));
           ok = true;
         } else if (optionMatches(optionLabel(el), wanted, effectiveField)) {
+          if (!el.checked) el.click();
           el.checked = true;
           el.dispatchEvent(new Event("input", { bubbles: true }));
           el.dispatchEvent(new Event("change", { bubbles: true }));
@@ -774,8 +911,11 @@
           continue;
         }
       } else {
-        setNativeValue(el, wanted);
-        ok = true;
+        ok = await setCustomSelectInput(el, wanted, effectiveField);
+        if (!ok) {
+          setNativeValue(el, wanted);
+          ok = true;
+        }
       }
 
       if (ok) {
@@ -785,7 +925,17 @@
       else skipped.push({ field: effectiveField, name: el.name || el.id, reason: "no-option" });
     }
 
-    return { matched: matches.length, skipped: skipped.length, matches, skipped, url: location.href, platform: platform() };
+    const remainingRequired = emptyRequiredFields();
+    return {
+      matched: matches.length,
+      skipped: skipped.length,
+      matches,
+      skipped,
+      remainingRequiredCount: remainingRequired.length,
+      remainingRequired: remainingRequired.slice(0, 30),
+      url: location.href,
+      platform: platform()
+    };
   }
 
   function getFillableFields() {
@@ -809,11 +959,12 @@
   function scan() {
     const fields = getFillableFields();
     const detected = fields
-      .map((el) => ({ field: detectField(el), name: el.name || el.id, label: debugLabel(el), type: el.type || el.tagName.toLowerCase() }))
+      .map((el) => fieldInfo(el))
       .filter((item) => item.field);
     const unknownFields = fields
-      .map((el) => ({ field: detectField(el), name: el.name || el.id, label: debugLabel(el), type: el.type || el.tagName.toLowerCase() }))
+      .map((el) => fieldInfo(el))
       .filter((item) => !item.field);
+    const remainingRequired = emptyRequiredFields();
     return {
       platform: platform(),
       title: document.title,
@@ -823,8 +974,42 @@
       detectedFields: detected.slice(0, 80),
       unknown: unknownFields.length,
       unknownFields: unknownFields.slice(0, 40),
+      remainingRequiredCount: remainingRequired.length,
+      remainingRequired: remainingRequired.slice(0, 30),
       entryCandidates: findEntryCandidates()
     };
+  }
+
+  function ensureHighlightStyle() {
+    if (document.getElementById(HIGHLIGHT_STYLE_ID)) return;
+    const style = document.createElement("style");
+    style.id = HIGHLIGHT_STYLE_ID;
+    style.textContent = `
+      [${HIGHLIGHT_ATTR}="detected"] { outline: 3px solid #1f7a5f !important; outline-offset: 2px !important; background-color: rgba(31, 122, 95, 0.08) !important; }
+      [${HIGHLIGHT_ATTR}="unknown"] { outline: 3px solid #b54708 !important; outline-offset: 2px !important; background-color: rgba(181, 71, 8, 0.08) !important; }
+      [${HIGHLIGHT_ATTR}="required"] { outline: 3px solid #d92d20 !important; outline-offset: 2px !important; background-color: rgba(217, 45, 32, 0.10) !important; }
+    `;
+    document.documentElement.appendChild(style);
+  }
+
+  function clearHighlights() {
+    for (const el of document.querySelectorAll(`[${HIGHLIGHT_ATTR}]`)) el.removeAttribute(HIGHLIGHT_ATTR);
+  }
+
+  function highlightFields() {
+    ensureHighlightStyle();
+    clearHighlights();
+    const fields = getFillableFields();
+    for (const el of fields) {
+      el.setAttribute(HIGHLIGHT_ATTR, detectField(el) ? "detected" : "unknown");
+      el.title = [el.title, debugLabel(el)].filter(Boolean).join(" / ").slice(0, 240);
+    }
+    for (const item of emptyRequiredFields()) {
+      const target = fields.find((el) => (el.name || el.id) === item.name && (el.type || el.tagName.toLowerCase()) === item.type) ||
+        fields.find((el) => debugLabel(el) === item.label);
+      if (target) target.setAttribute(HIGHLIGHT_ATTR, "required");
+    }
+    return scan();
   }
 
   function candidateFrom(el) {
@@ -931,11 +1116,22 @@
       return true;
     }
     if (message.type === "FILL_ACTIVE") {
-      sendResponse(fill(message.profile || {}, message.options || {}));
+      fill(message.profile || {}, message.options || {})
+        .then((result) => sendResponse(result))
+        .catch((error) => sendResponse({ matched: 0, skipped: 0, matches: [], skipped: [], error: error.message, url: location.href, platform: platform() }));
       return true;
     }
     if (message.type === "FIND_ENTRY_ACTIVE") {
       sendResponse({ platform: platform(), url: location.href, candidates: findEntryCandidates() });
+      return true;
+    }
+    if (message.type === "HIGHLIGHT_ACTIVE") {
+      sendResponse(highlightFields());
+      return true;
+    }
+    if (message.type === "CLEAR_HIGHLIGHT_ACTIVE") {
+      clearHighlights();
+      sendResponse({ ok: true, platform: platform(), url: location.href });
       return true;
     }
     return false;

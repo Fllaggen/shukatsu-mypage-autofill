@@ -40,7 +40,13 @@ async function sendToActiveTab(message) {
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (!message || !message.type) return false;
 
-  if (message.type === "SCAN_ACTIVE" || message.type === "FILL_ACTIVE" || message.type === "FIND_ENTRY_ACTIVE") {
+  if (
+    message.type === "SCAN_ACTIVE" ||
+    message.type === "FILL_ACTIVE" ||
+    message.type === "FIND_ENTRY_ACTIVE" ||
+    message.type === "HIGHLIGHT_ACTIVE" ||
+    message.type === "CLEAR_HIGHLIGHT_ACTIVE"
+  ) {
     sendToActiveTab(message)
       .then((result) => sendResponse({ ok: true, result }))
       .catch((error) => sendResponse({ ok: false, error: error.message }));

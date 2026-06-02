@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Shukatsu MyPage Autofill",
   "description": "新卒採用マイページ登録フォームをローカル保存プロフィールから自動入力します。",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "permissions": ["activeTab", "scripting", "storage", "tabs"],
   "host_permissions": ["http://*/*", "https://*/*"],
   "action": {

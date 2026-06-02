@@ -97,6 +97,11 @@ button.primary:hover {
   background: var(--accent-strong);
 }
 
+button.danger {
+  border-color: #d92d20;
+  color: #b42318;
+}
+
 .switch,
 .check {
   display: flex;

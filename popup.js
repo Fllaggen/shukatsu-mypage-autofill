@@ -78,6 +78,7 @@ const DEFAULT_PROFILE = {
 
 const fields = Array.from(document.querySelectorAll("[data-key]"));
 const statusEl = document.querySelector("#status");
+const importFileInput = document.querySelector("#importFile");
 let lastScan = null;
 
 function setStatus(message, warn = false) {
@@ -126,7 +127,8 @@ function summarizeScan(result) {
   const lines = [
     `${result.platform} / 入力欄 ${result.fields} 個`,
     `自動判定できた項目 ${result.detected} 個`,
-    `未判定 ${result.unknown || 0} 個`
+    `未判定 ${result.unknown || 0} 個`,
+    `未入力の必須欄 ${result.remainingRequiredCount || 0} 個`
   ];
   if (result.detectedFields?.length) {
     lines.push(result.detectedFields.slice(0, 8).map((item) => `・${item.field}: ${item.label || item.name}`).join("\n"));
@@ -134,6 +136,23 @@ function summarizeScan(result) {
   if (result.unknownFields?.length) {
     lines.push("未判定の例");
     lines.push(result.unknownFields.slice(0, 8).map((item) => `・${item.label || item.name || item.type}`).join("\n"));
+  }
+  if (result.remainingRequired?.length) {
+    lines.push("未入力の必須欄");
+    lines.push(result.remainingRequired.slice(0, 8).map((item) => `・${item.label || item.name || item.type}`).join("\n"));
+  }
+  return lines.join("\n");
+}
+
+function summarizeFill(result) {
+  const lines = [
+    `${result.platform} に入力しました。`,
+    `入力 ${result.matched} 個 / スキップ ${result.skipped} 個`,
+    `未入力の必須欄 ${result.remainingRequiredCount || 0} 個`
+  ];
+  if (result.remainingRequired?.length) {
+    lines.push("残っている必須欄");
+    lines.push(result.remainingRequired.slice(0, 8).map((item) => `・${item.label || item.name || item.type}`).join("\n"));
   }
   return lines.join("\n");
 }
@@ -160,7 +179,26 @@ document.querySelector("#fill").addEventListener("click", async () => {
     const profile = await saveProfile();
     const overwrite = document.querySelector("#overwrite").checked;
     const result = await send("FILL_ACTIVE", { profile, options: { overwrite } });
-    setStatus(`${result.platform} に入力しました。\n入力 ${result.matched} 個 / スキップ ${result.skipped} 個`);
+    setStatus(summarizeFill(result), Boolean(result.remainingRequiredCount));
+  } catch (error) {
+    setStatus(error.message, true);
+  }
+});
+
+document.querySelector("#highlight").addEventListener("click", async () => {
+  try {
+    const result = await send("HIGHLIGHT_ACTIVE");
+    lastScan = result;
+    setStatus(`ページ上で入力欄を色付けしました。\n緑: 判定済み / 茶色: 未判定 / 赤: 未入力の必須欄\n\n${summarizeScan(result)}`, Boolean(result.remainingRequiredCount || result.unknown));
+  } catch (error) {
+    setStatus(error.message, true);
+  }
+});
+
+document.querySelector("#clearHighlight").addEventListener("click", async () => {
+  try {
+    await send("CLEAR_HIGHLIGHT_ACTIVE");
+    setStatus("ページ上の色付けを消しました。");
   } catch (error) {
     setStatus(error.message, true);
   }
@@ -184,11 +222,71 @@ document.querySelector("#copyUnknown").addEventListener("click", async () => {
       `URL: ${result.url}`,
       `サイト: ${result.platform}`,
       `入力欄: ${result.fields} / 判定: ${result.detected} / 未判定: ${result.unknown || 0}`,
+      `未入力の必須欄: ${result.remainingRequiredCount || 0}`,
       "",
-      ...(result.unknownFields || []).map((item) => `- ${item.type}: ${item.label || item.name || "(名前なし)"}`)
+      "未判定:",
+      ...((result.unknownFields || []).map((item) => `- ${item.type}: ${item.label || item.name || "(名前なし)"}`)),
+      "",
+      "未入力の必須欄:",
+      ...((result.remainingRequired || []).map((item) => `- ${item.type}: ${item.label || item.name || "(名前なし)"}`))
     ];
     await navigator.clipboard.writeText(lines.join("\n"));
-    setStatus("未判定項目をコピーしました。対応依頼するときに貼り付けてください。");
+    setStatus("診断内容をコピーしました。対応依頼するときに貼り付けてください。");
+  } catch (error) {
+    setStatus(error.message, true);
+  }
+});
+
+document.querySelector("#exportProfile").addEventListener("click", () => {
+  try {
+    const profile = readForm();
+    const payload = {
+      app: "Shukatsu MyPage Autofill",
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      profile
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "shukatsu-autofill-profile.json";
+    a.click();
+    URL.revokeObjectURL(url);
+    setStatus("保存データを書き出しました。個人情報入りなので扱いに注意してください。");
+  } catch (error) {
+    setStatus(error.message, true);
+  }
+});
+
+document.querySelector("#importProfile").addEventListener("click", () => {
+  importFileInput.click();
+});
+
+importFileInput.addEventListener("change", async () => {
+  try {
+    const file = importFileInput.files?.[0];
+    if (!file) return;
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+    const profile = parsed.profile || parsed;
+    writeForm(profile);
+    await saveProfile();
+    setStatus("保存データを読み込みました。内容を確認してから使ってください。");
+  } catch (error) {
+    setStatus("読み込みに失敗しました。JSONファイルか確認してください。", true);
+  } finally {
+    importFileInput.value = "";
+  }
+});
+
+document.querySelector("#clearProfile").addEventListener("click", async () => {
+  if (!confirm("このブラウザに保存したプロフィールを消します。よろしいですか？")) return;
+  try {
+    await chrome.storage.local.remove(STORAGE_KEY);
+    writeForm(DEFAULT_PROFILE);
+    lastScan = null;
+    setStatus("保存情報を消しました。");
   } catch (error) {
     setStatus(error.message, true);
   }
