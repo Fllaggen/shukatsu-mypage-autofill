@@ -251,8 +251,17 @@
     if (!option || /選択|未選択|指定なし|choose|select/.test(option)) return false;
     if (option === value || tokens.includes(option)) return true;
     if ((value === "true" || value === "yes" || value === "同意" || value === "同意する") && /同意|承諾|確認|agree|accept|はい|yes/.test(option)) return true;
-    if ((value === "false" || value === "no" || value === "なし" || value === "無") && /なし|無|いいえ|no|該当なし|経験なし/.test(option)) return true;
+    if ((value === "true" || value === "yes" || value === "有" || value === "あり") && /有|あり|はい|yes|〇|○/.test(option)) return true;
+    if ((value === "false" || value === "no" || value === "なし" || value === "無") && /なし|無|いいえ|no|該当なし|経験なし|×/.test(option)) return true;
     if (field === "gradStatus" && /卒業|予定|見込み|修了/.test(value) && /はい|yes|卒業予定|見込み|卒業見込み/.test(option)) return true;
+    if (field === "gradStatus" && value.includes("卒業") && option.includes("卒業予定")) return true;
+    if (field === "gradStatus" && value.includes("修了") && option.includes("修了予定")) return true;
+    if (field === "schoolType" && value.includes("大学") && /大学|学部/.test(option)) return true;
+    if (field === "humanitiesScience" && /文系|人文|社会|経済|商|法/.test(value) && /文系|文学|人文|社会|経済|経営|管理|商|法/.test(option)) return true;
+    if (field === "humanitiesScience" && /理系|理工|工学|情報|自然科学/.test(value) && /理系|理工|工学|情報|自然科学/.test(option)) return true;
+    if ((field === "qualification" || field === "driverLicense") && /有|あり|免許|資格|toeic|toefl|ielts/.test(value) && /有|あり|保有|取得|はい|yes/.test(option)) return true;
+    if ((field === "qualification" || field === "driverLicense") && /有|あり|免許|資格|toeic|toefl|ielts/.test(value) && /〇|○/.test(option)) return true;
+    if ((field === "relocationConsent" || field === "workAuthorization") && /はい|可能|可|理解|同意|yes/.test(value) && /はい|可能|可|理解|同意|yes/.test(option)) return true;
     if ((field === "gender" || field === "driverLicense" || field === "humanitiesScience") && tokens.some((token) => option.includes(token) || token.includes(option))) return true;
     if (value.length >= 2 && (option.includes(value) || value.includes(option))) return true;
     return tokens.some((token) => token.length >= 2 && (option.includes(token) || token.includes(option)));
@@ -602,6 +611,8 @@
     if (/shikbn|ddlsotsuk|graduationstatus|gradstatus/.test(rawName)) return "gradStatus";
     if (/cschoolshubetsu|schooltype|schoolkind/.test(rawName)) return "schoolType";
     if (/cschoolkeito|schoolsystem|schoolfield|bunri/.test(rawName)) return "humanitiesScience";
+    if (/cschooltoy|schoolendyear|graduationendyear/.test(rawName)) return "schoolEndYear";
+    if (/cschooltom|schoolendmonth|graduationendmonth/.test(rawName)) return "schoolEndMonth";
     if (/cschooltokubun|graduationdivision/.test(rawName)) return "gradStatus";
     if (/学位|課程|degree/.test(allCtx + rawName)) return "degree";
     if (/在留資格|residencestatus|visa|statusofresidence/.test(allCtx + rawName)) return "residenceStatus";
@@ -824,53 +835,147 @@
 
   function isCustomSelectInput(el) {
     if (el.tagName !== "INPUT") return false;
-    const ctx = `${el.getAttribute("role") || ""} ${el.getAttribute("aria-label") || ""} ${el.getAttribute("title") || ""} ${el.getAttribute("inputmode") || ""} ${el.closest(".v-select, .ats-select, [role=combobox]")?.className || ""}`;
-    return /combobox|Open|none|v-select|ats-select/.test(ctx);
+    const root = el.closest(".v-input, .v-select, .v-autocomplete, .v-combobox, .ats-select, [role=combobox]");
+    const ctx = `${el.getAttribute("role") || ""} ${el.getAttribute("aria-label") || ""} ${el.getAttribute("title") || ""} ${el.getAttribute("inputmode") || ""} ${root?.className || ""}`;
+    return /combobox|Open|none|v-select|v-autocomplete|v-combobox|ats-select/.test(ctx);
   }
 
-  async function setCustomSelectInput(el, wanted, field = "") {
-    if (!isCustomSelectInput(el)) return false;
-    el.focus();
-    el.click();
-    await wait(120);
-    const proto = HTMLInputElement.prototype;
-    const setter = Object.getOwnPropertyDescriptor(proto, "value")?.set;
-    if (setter) setter.call(el, wanted);
-    else el.value = wanted;
-    el.dispatchEvent(new Event("input", { bubbles: true }));
-    el.dispatchEvent(new Event("change", { bubbles: true }));
-    await wait(180);
+  function customSelectRoot(el) {
+    return el.closest(".v-input, .v-select, .v-autocomplete, .v-combobox, .ats-select, [role=combobox]") || el;
+  }
 
+  function customSelectClickTarget(el) {
+    const root = customSelectRoot(el);
+    return root.querySelector('.v-field[role="button"][aria-owns], .v-field[role="button"], .v-field, .v-input__control, .v-field__append-inner, .v-select__selection, .v-field__input') || el;
+  }
+
+  function activateElement(el) {
+    const events = ["pointerdown", "mousedown", "pointerup", "mouseup", "click"];
+    for (const type of events) {
+      el.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, view: window }));
+    }
+  }
+
+  function visibleCustomOptions(menuId = "") {
     const optionSelectors = [
+      ".v-overlay--active .v-list-item",
       "[role=option]",
       ".v-list-item",
       ".v-list-item-title",
       ".v-list-item__content",
       ".v-overlay .v-list *",
+      ".v-menu__content *",
       ".menuable__content__active *",
       "li"
     ].join(",");
-    const options = Array.from(document.querySelectorAll(optionSelectors))
+    const containers = [];
+    const menu = menuId ? document.getElementById(menuId) : null;
+    if (menu) containers.push(menu);
+    containers.push(document);
+    const seen = new Set();
+    return containers.flatMap((container) => Array.from(container.querySelectorAll(optionSelectors)))
       .filter((option) => isVisible(option))
-      .map((option) => ({
-        el: option.closest("[role=option], .v-list-item, li") || option,
-        text: (option.innerText || option.textContent || "").replace(/\s+/g, " ").trim()
-      }))
-      .filter((option) => option.text);
-    const found = options.find((option) => optionMatches(option.text, wanted, field));
-    if (found) {
-      found.el.click();
-      await wait(120);
-    } else {
+      .map((option) => {
+        const el = option.closest("[role=option], .v-list-item, li") || option;
+        const text = (option.innerText || option.textContent || "").replace(/\s+/g, " ").trim();
+        return { el, text };
+      })
+      .filter((option) => {
+        if (!option.text) return false;
+        const key = `${option.text}:${option.el.tagName}:${option.el.className}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+  }
+
+  function valueForChoiceField(wanted, field) {
+    const value = String(wanted || "");
+    if ((field === "qualification" || field === "driverLicense") && /免許|資格|toeic|toefl|ielts|有|あり/i.test(value)) return "有";
+    if (field === "relocationConsent" && /はい|可能|可|理解|同意|yes/i.test(value)) return "はい";
+    if (field === "workAuthorization" && /可能|可|はい|yes/i.test(value)) return "可能";
+    if (field === "humanitiesScience" && /文系|人文|社会|経済|商|法/.test(value)) return "その他文系";
+    if (field === "humanitiesScience" && /理系|理工|工学|情報|自然科学/.test(value)) return "その他理系";
+    return value;
+  }
+
+  function preferredCustomOptions(field, wanted) {
+    const value = normalize(wanted);
+    if (field === "howKnowCompany") {
+      if (/マイナビ|リクナビ|就活|ナビ|サイト/.test(value)) return ["リクルートサイト", "キャリタス就活", "その他"];
+      if (/ホームページ|hp|web/.test(value)) return ["当社ホームページ", "リクルートサイト"];
+      return ["その他"];
+    }
+    if (field === "qualification" || field === "driverLicense") {
+      if (/なし|無|ない|×/.test(value)) return ["×", "なし", "無"];
+      return ["〇", "○", "有", "はい"];
+    }
+    if (field === "relocationConsent" || field === "workAuthorization") {
+      if (/いいえ|不可|×|なし/.test(value)) return ["いいえ", "×"];
+      return ["はい", "可能", "可"];
+    }
+    return [];
+  }
+
+  async function setCustomSelectInput(el, wanted, field = "") {
+    if (!isCustomSelectInput(el)) return false;
+    const root = customSelectRoot(el);
+    const clickTarget = customSelectClickTarget(el);
+    const menuId = clickTarget.getAttribute("aria-owns") || root.querySelector("[aria-owns]")?.getAttribute("aria-owns") || "";
+    const candidates = Array.from(new Set([wanted, valueForChoiceField(wanted, field)].filter(Boolean)));
+    const canType = el.getAttribute("inputmode") !== "none" && !/v-select--single/.test(String(root.className || ""));
+
+    el.focus();
+    const proto = HTMLInputElement.prototype;
+    const setter = Object.getOwnPropertyDescriptor(proto, "value")?.set;
+
+    for (const candidate of candidates) {
+      el.scrollIntoView({ block: "center", inline: "nearest" });
+      await wait(80);
+      activateElement(clickTarget);
+      activateElement(root);
+      el.focus();
+      activateElement(el);
+      await wait(160);
+      if (canType) {
+        if (setter) setter.call(el, "");
+        else el.value = "";
+        el.dispatchEvent(new Event("input", { bubbles: true }));
+        await wait(40);
+        if (setter) setter.call(el, candidate);
+        else el.value = candidate;
+        el.dispatchEvent(new Event("input", { bubbles: true }));
+        el.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+      await wait(700);
+
+      const options = visibleCustomOptions(menuId);
+      const preferred = preferredCustomOptions(field, wanted).map((item) => normalize(item));
+      const found = options.find((option) => optionMatches(option.text, candidate, field) || optionMatches(option.text, wanted, field))
+        || options.find((option) => preferred.includes(normalize(option.text)));
+      if (found) {
+        activateElement(found.el);
+        await wait(320);
+        el.dispatchEvent(new Event("blur", { bubbles: true }));
+        const rootText = root.innerText.trim();
+        if (hasFieldValue(el) || rootText.includes(candidate) || rootText.includes(found.text)) return true;
+      }
+
+      el.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", code: "ArrowDown", bubbles: true }));
+      el.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowDown", code: "ArrowDown", bubbles: true }));
+      await wait(60);
       el.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", code: "Enter", bubbles: true }));
       el.dispatchEvent(new KeyboardEvent("keyup", { key: "Enter", code: "Enter", bubbles: true }));
-      await wait(80);
+      await wait(220);
+      el.dispatchEvent(new Event("blur", { bubbles: true }));
+      if (hasFieldValue(el) || root.innerText.trim().includes(candidate)) return true;
     }
+
     el.dispatchEvent(new Event("blur", { bubbles: true }));
     return hasFieldValue(el);
   }
 
-  function selectByTextOrValue(select, wanted, field = "") {
+  function findSelectOption(select, wanted, field = "") {
     const normalized = normalize(wanted);
     const options = Array.from(select.options);
     const exact = options.find((option) => normalize(option.value) === normalized || normalize(option.text) === normalized);
@@ -886,12 +991,41 @@
         })
       : null;
     const fuzzy = options.find((option) => optionMatches(`${option.text} ${option.value}`, wanted, field));
-    const found = exact || padded || numeric || pref || graduation || fuzzy;
+    return exact || padded || numeric || pref || graduation || fuzzy;
+  }
+
+  async function selectByTextOrValue(select, wanted, field = "") {
+    const candidates = Array.from(new Set([wanted, valueForChoiceField(wanted, field)].filter(Boolean)));
+    let found = null;
+    for (let attempt = 0; attempt < 8; attempt += 1) {
+      for (const candidate of candidates) {
+        found = findSelectOption(select, candidate, field);
+        if (found) break;
+      }
+      if (found) break;
+      await wait(180);
+    }
     if (!found) return false;
     select.value = found.value;
+    found.selected = true;
     select.dispatchEvent(new Event("input", { bubbles: true }));
     select.dispatchEvent(new Event("change", { bubbles: true }));
+    select.dispatchEvent(new Event("blur", { bubbles: true }));
+    await wait(260);
     return true;
+  }
+
+  function forceSelectByTextOrValue(select, wanted, field = "") {
+    const candidates = Array.from(new Set([wanted, valueForChoiceField(wanted, field)].filter(Boolean)));
+    let found = null;
+    for (const candidate of candidates) {
+      found = findSelectOption(select, candidate, field);
+      if (found) break;
+    }
+    if (!found) return false;
+    select.value = found.value;
+    found.selected = true;
+    return hasFieldValue(select);
   }
 
   function setRadio(el, field, value) {
@@ -908,6 +1042,148 @@
     el.dispatchEvent(new Event("input", { bubbles: true }));
     el.dispatchEvent(new Event("change", { bubbles: true }));
     return true;
+  }
+
+  function findFieldElement(info) {
+    const controls = getFillableFields();
+    if (info.name) {
+      const found = controls.find((el) => (el.name || el.id) === info.name);
+      if (found) return found;
+    }
+    return controls.find((el) => detectField(el) === info.field && debugLabel(el) === info.label)
+      || controls.find((el) => detectField(el) === info.field && !hasFieldValue(el));
+  }
+
+  async function fillOneField(el, field, wanted, overwrite) {
+    if (!el || wanted === undefined || wanted === null || wanted === "") return false;
+    if (!overwrite && el.value && el.type !== "radio" && el.type !== "checkbox") return false;
+    if (el.tagName === "SELECT") return selectByTextOrValue(el, wanted, field);
+    if (el.type === "radio") return setRadio(el, field, wanted);
+    if (el.type === "checkbox") {
+      if (["holidaySame", "termsConsent", "privacyConsent", "foreignAddress"].includes(field)) {
+        const shouldCheck = Boolean(wanted);
+        if (el.checked !== shouldCheck) activateElement(el);
+        el.checked = shouldCheck;
+        el.dispatchEvent(new Event("input", { bubbles: true }));
+        el.dispatchEvent(new Event("change", { bubbles: true }));
+        return true;
+      }
+      if (!optionMatches(optionLabel(el), wanted, field)) return false;
+      if (!el.checked) activateElement(el);
+      el.checked = true;
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+      el.dispatchEvent(new Event("change", { bubbles: true }));
+      return true;
+    }
+    const customOk = await setCustomSelectInput(el, wanted, field);
+    if (customOk) return true;
+    setNativeValue(el, wanted);
+    return true;
+  }
+
+  async function refillMissingRequired(values, customAnswers, overwrite, matches, skipped) {
+    for (let pass = 0; pass < 3; pass += 1) {
+      const missing = emptyRequiredFields();
+      if (!missing.length) return;
+      let changed = false;
+      for (const item of missing) {
+        const el = findFieldElement(item);
+        if (!el) continue;
+        const field = detectField(el);
+        const customWanted = customAnswerFor(el, customAnswers);
+        const wanted = customWanted || (field ? valueFor(el, field, values) : "");
+        const effectiveField = field || "customAnswer";
+        const before = hasFieldValue(el) ? String(el.value || optionLabel(el) || "") : "";
+        const ok = await fillOneField(el, effectiveField, wanted, overwrite);
+        await wait(180);
+        const forced = !hasFieldValue(el) && el.tagName === "SELECT"
+          ? forceSelectByTextOrValue(el, wanted, effectiveField)
+          : false;
+        const after = hasFieldValue(el) ? String(el.value || optionLabel(el) || "") : "";
+        if (ok || forced) {
+          matches.push({ field: effectiveField, name: el.name || el.id, tag: el.tagName.toLowerCase(), retry: true });
+          changed = changed || before !== after || hasFieldValue(el);
+        } else {
+          skipped.push({ field: effectiveField, name: el.name || el.id, reason: "required-retry-failed" });
+        }
+      }
+      if (!changed) return;
+    }
+  }
+
+  function selectOptionSilently(select, matcher) {
+    const found = Array.from(select.options).find((option) => matcher(normalize(option.text), normalize(option.value), option));
+    if (!found) return false;
+    select.value = found.value;
+    found.selected = true;
+    return hasFieldValue(select);
+  }
+
+  function selectPreferredTextSilently(select, texts) {
+    const normalizedTexts = texts.map((text) => normalize(text));
+    const found = Array.from(select.options).find((option) => normalizedTexts.includes(normalize(option.text)));
+    if (!found) return false;
+    select.value = found.value;
+    found.selected = true;
+    return hasFieldValue(select);
+  }
+
+  async function selectActiveVuetifyOption(el, field, wanted) {
+    const root = customSelectRoot(el);
+    const button = root.querySelector('.v-field[role="button"], [role="button"][aria-owns], .v-field') || el;
+    const preferred = preferredCustomOptions(field, wanted).map((item) => normalize(item));
+    el.scrollIntoView({ block: "center", inline: "nearest" });
+    await wait(80);
+    activateElement(button);
+    await wait(750);
+    const items = Array.from(document.querySelectorAll(".v-overlay--active .v-list-item"))
+      .map((item) => ({
+        el: item,
+        text: (item.innerText || item.textContent || "").replace(/\s+/g, " ").trim()
+      }))
+      .filter((item) => item.text);
+    const found = items.find((item) => optionMatches(item.text, wanted, field))
+      || items.find((item) => preferred.includes(normalize(item.text)));
+    if (!found) return false;
+    activateElement(found.el);
+    await wait(500);
+    return hasFieldValue(el) || root.innerText.includes(found.text);
+  }
+
+  async function applyPlatformSpecificFinalValues(values, matches) {
+    if (/job\.axol\.jp$/i.test(location.hostname)) {
+      const schoolField = document.querySelector('select[name="c_school_keito"]');
+      if (schoolField && !hasFieldValue(schoolField)) {
+        const raw = normalize(values.humanitiesScience);
+        const ok = /理系|理工|工学|情報|自然科学/.test(raw)
+          ? selectPreferredTextSilently(schoolField, ["その他理系"]) || selectOptionSilently(schoolField, (text) => /理系|理工|工学|情報/.test(text))
+          : selectPreferredTextSilently(schoolField, ["その他文系"]) || selectOptionSilently(schoolField, (text) => /文系|文学|経済|経営|管理|社会|法/.test(text));
+        if (ok) matches.push({ field: "humanitiesScience", name: "c_school_keito", tag: "select", retry: true, platformFinal: true });
+      }
+
+      const gradField = document.querySelector('select[name="c_school_to_kubun"]');
+      if (gradField && !hasFieldValue(gradField)) {
+        const raw = normalize(values.gradStatus);
+        const ok = /修了/.test(raw)
+          ? selectPreferredTextSilently(gradField, ["修了予定"]) || selectOptionSilently(gradField, (text) => /修了/.test(text))
+          : selectPreferredTextSilently(gradField, ["卒業予定"]) || selectOptionSilently(gradField, (text) => /卒業/.test(text));
+        if (ok) matches.push({ field: "gradStatus", name: "c_school_to_kubun", tag: "select", retry: true, platformFinal: true });
+      }
+    }
+
+    if (/hito-link|hitolink/i.test(location.hostname)) {
+      const targets = [
+        { selector: "#input-84", field: "howKnowCompany", wanted: values.howKnowCompany },
+        { selector: "#input-98", field: "qualification", wanted: values.qualification || values.driverLicense },
+        { selector: "#input-158", field: "relocationConsent", wanted: values.relocationConsent }
+      ];
+      for (const target of targets) {
+        const el = document.querySelector(target.selector);
+        if (!el || hasFieldValue(el)) continue;
+        const ok = await selectActiveVuetifyOption(el, target.field, target.wanted);
+        if (ok) matches.push({ field: target.field, name: el.name || el.id, tag: el.tagName.toLowerCase(), retry: true, platformFinal: true });
+      }
+    }
   }
 
   async function fill(profile, options = {}) {
@@ -932,50 +1208,28 @@
         continue;
       }
 
-      let ok = false;
-      if (el.tagName === "SELECT") ok = selectByTextOrValue(el, wanted, effectiveField);
-      else if (el.type === "radio") ok = setRadio(el, effectiveField, wanted);
-      else if (el.type === "checkbox") {
-        if (["holidaySame", "termsConsent", "privacyConsent", "foreignAddress"].includes(effectiveField)) {
-          const shouldCheck = Boolean(wanted);
-          if (el.checked !== shouldCheck) el.click();
-          el.checked = shouldCheck;
-          el.dispatchEvent(new Event("input", { bubbles: true }));
-          el.dispatchEvent(new Event("change", { bubbles: true }));
-          ok = true;
-        } else if (optionMatches(optionLabel(el), wanted, effectiveField)) {
-          if (!el.checked) el.click();
-          el.checked = true;
-          el.dispatchEvent(new Event("input", { bubbles: true }));
-          el.dispatchEvent(new Event("change", { bubbles: true }));
-          ok = true;
-        } else {
-          continue;
-        }
-      } else {
-        ok = await setCustomSelectInput(el, wanted, effectiveField);
-        if (!ok) {
-          setNativeValue(el, wanted);
-          ok = true;
-        }
-      }
+      const ok = await fillOneField(el, effectiveField, wanted, overwrite);
 
       if (ok) {
         if (radioGroupKey) completedRadioGroups.add(radioGroupKey);
         matches.push({ field: effectiveField, name: el.name || el.id, tag: el.tagName.toLowerCase() });
       }
-      else skipped.push({ field: effectiveField, name: el.name || el.id, reason: "no-option" });
+      else if (el.type !== "checkbox") skipped.push({ field: effectiveField, name: el.name || el.id, reason: "no-option" });
     }
 
-    const detected = fields
+    await refillMissingRequired(values, customAnswers, overwrite, matches, skipped);
+    await applyPlatformSpecificFinalValues(values, matches);
+
+    const currentFields = getFillableFields();
+    const detected = currentFields
       .map((el) => fieldInfo(el))
       .filter((item) => item.field);
-    const unknownFields = fields
+    const unknownFields = currentFields
       .map((el) => fieldInfo(el))
       .filter((item) => !item.field);
     const remainingRequired = emptyRequiredFields();
     return {
-      fields: fields.length,
+      fields: currentFields.length,
       detected: detected.length,
       detectedFields: detected.slice(0, 80),
       unknown: unknownFields.length,
