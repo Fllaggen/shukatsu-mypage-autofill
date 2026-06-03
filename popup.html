@@ -51,6 +51,8 @@
           <label>名<input data-key="firstName" autocomplete="given-name"></label>
           <label>セイ<input data-key="lastNameKana"></label>
           <label>メイ<input data-key="firstNameKana"></label>
+          <label>ローマ字姓<input data-key="romanLastName" placeholder="YAMADA"></label>
+          <label>ローマ字名<input data-key="romanFirstName" placeholder="TARO"></label>
         </div>
       </section>
 
@@ -113,8 +115,24 @@
           <label>学科・専攻<input data-key="department"></label>
         </div>
         <div class="grid two">
-          <label>学校区分<input data-key="schoolType" placeholder="大学"></label>
-          <label>文理区分<input data-key="humanitiesScience" placeholder="文系"></label>
+          <label>学校区分
+            <select data-key="schoolType">
+              <option value="">未選択</option>
+              <option value="大学">大学</option>
+              <option value="大学院">大学院</option>
+              <option value="短期大学">短期大学</option>
+              <option value="高等専門学校">高等専門学校</option>
+              <option value="専門学校">専門学校</option>
+              <option value="高等学校">高等学校</option>
+            </select>
+          </label>
+          <label>文理区分
+            <select data-key="humanitiesScience">
+              <option value="">未選択</option>
+              <option value="文系">文系</option>
+              <option value="理系">理系</option>
+            </select>
+          </label>
         </div>
         <div class="grid two">
           <label>入学年<input data-key="schoolStartYear" placeholder="2023"></label>
@@ -129,6 +147,31 @@
           <label>学位取得年<input data-key="degreeYear" placeholder="2027"></label>
         </div>
         <label>学位取得月<input data-key="degreeMonth" placeholder="03"></label>
+        <div class="grid two">
+          <label>高校名<input data-key="highSchoolName" placeholder="○○高等学校"></label>
+          <label>高校よみがな<input data-key="highSchoolKana" placeholder="○○こうとうがっこう"></label>
+        </div>
+        <div class="grid two">
+          <label>高校所在地<input data-key="highSchoolPrefecture" placeholder="東京都"></label>
+          <label>高校区分
+            <select data-key="highSchoolType">
+              <option value="">未選択</option>
+              <option value="高校">高校</option>
+              <option value="高専（本科）">高専（本科）</option>
+              <option value="高専（専攻科）">高専（専攻科）</option>
+              <option value="短大">短大</option>
+              <option value="専門学校">専門学校</option>
+            </select>
+          </label>
+        </div>
+        <div class="grid two">
+          <label>高校入学年<input data-key="highSchoolStartYear" placeholder="空欄なら高校卒業年の3年前"></label>
+          <label>高校入学月<input data-key="highSchoolStartMonth" placeholder="04"></label>
+        </div>
+        <div class="grid two">
+          <label>高校卒業年<input data-key="highSchoolGradYear" placeholder="2023"></label>
+          <label>高校卒業月<input data-key="highSchoolGradMonth" placeholder="03"></label>
+        </div>
         <label>ゼミ・研究室<input data-key="seminar"></label>
         <label>研究テーマ<input data-key="researchTheme"></label>
       </section>
@@ -145,10 +188,9 @@
           <label>希望職種<input data-key="desiredJob"></label>
           <label>希望勤務地<input data-key="desiredLocation"></label>
         </div>
-        <label>企業選びで重視する点<textarea data-key="companyCriteria" rows="3" placeholder="仕事内容が魅力的、社会貢献度が高い、福利厚生が充実している"></textarea></label>
         <label>参加希望イベント<textarea data-key="interestedEvents" rows="3" placeholder="2days夏インターンシップ、東京セミナーなど"></textarea></label>
         <label>イベント希望日程<input data-key="eventDate" placeholder="未定／別日程を希望、2026/6/10 など"></label>
-        <label>希望・連絡事項<textarea data-key="requestNote" rows="3"></textarea></label>
+        <label>会社を知ったきっかけ<input data-key="howKnowCompany" placeholder="マイナビ、合同説明会など"></label>
       </section>
 
       <section class="panel">
@@ -179,33 +221,6 @@
         <label>転勤の確認回答<input data-key="relocationConsent" placeholder="はい、理解しています など"></label>
         <label>紹介者・その他詳細<input data-key="referralDetail" placeholder="紹介者名、その他を選んだ理由など"></label>
         <label>該当なし用の回答<input data-key="noAnswer" placeholder="なし"></label>
-      </section>
-
-      <section class="panel">
-        <h2>よくある回答</h2>
-        <label>志望動機<textarea data-key="motivation" rows="4"></textarea></label>
-        <label>自己PR<textarea data-key="selfPr" rows="4"></textarea></label>
-        <label>学生時代に力を入れたこと<textarea data-key="studentEffort" rows="4"></textarea></label>
-        <label>研究・学業で取り組んだ内容<textarea data-key="studyDetail" rows="4"></textarea></label>
-        <label>強み<textarea data-key="strengths" rows="3"></textarea></label>
-        <label>弱み<textarea data-key="weakness" rows="3"></textarea></label>
-        <label>キャリアビジョン<textarea data-key="careerVision" rows="3" placeholder="将来どんな仕事をしたいか"></textarea></label>
-        <label>職種志望理由<textarea data-key="jobReason" rows="3" placeholder="その職種を希望する理由"></textarea></label>
-        <label>業界・事業に興味を持った理由<textarea data-key="industryInterest" rows="3"></textarea></label>
-        <label>働く上で大切にしたいこと<textarea data-key="workValues" rows="3"></textarea></label>
-        <label>挑戦した経験<textarea data-key="challengeExperience" rows="3"></textarea></label>
-        <label>失敗・挫折から学んだこと<textarea data-key="failureExperience" rows="3"></textarea></label>
-        <label>チームで取り組んだ経験<textarea data-key="teamworkExperience" rows="3"></textarea></label>
-        <label>リーダーシップ経験<textarea data-key="leadershipExperience" rows="3"></textarea></label>
-        <label>成果・実績<textarea data-key="achievement" rows="3"></textarea></label>
-        <div class="grid two">
-          <label>語学スキル<input data-key="languageSkills" placeholder="英語: 日常会話、TOEIC 720 など"></label>
-          <label>IT・プログラミングスキル<input data-key="programmingSkills" placeholder="Excel、Python、JavaScript など"></label>
-        </div>
-        <label>ポートフォリオURL<input data-key="portfolioUrl" type="url" placeholder="https://..."></label>
-        <label>会社を知ったきっかけ<input data-key="howKnowCompany" placeholder="マイナビ、合同説明会など"></label>
-        <label>参加イベント・インターン<textarea data-key="internshipExperience" rows="3"></textarea></label>
-        <label>カスタム回答<textarea data-key="customAnswers" rows="5" placeholder="例&#10;第一希望職種=営業職&#10;留学経験=なし&#10;希望勤務地=東京"></textarea></label>
       </section>
 
       <section class="panel">

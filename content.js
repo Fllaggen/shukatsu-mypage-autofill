@@ -13,10 +13,12 @@
   const FIELD_ALIASES = {
     fullName: ["fullname", "full_name", "yourname", "username", "applicantname", "氏名", "お名前"],
     fullNameKana: ["fullnamekana", "full_name_kana", "furigana", "phonetic", "氏名カナ", "フリガナ", "ふりがな"],
-    lastName: ["kname1", "tbx_name1", "roma_sei", "kanji_sei", "sei", "familyname", "family-name", "lastname", "last-name", "surname", "name1", "氏名姓", "漢字氏名姓", "姓"],
-    firstName: ["kname2", "tbx_name2", "roma_na", "kanji_na", "mei", "givenname", "given-name", "firstname", "first-name", "name2", "氏名名", "漢字氏名名", "名"],
+    lastName: ["kname1", "tbx_name1", "kanji_sei", "sei", "familyname", "family-name", "lastname", "last-name", "surname", "name1", "氏名姓", "漢字氏名姓", "姓"],
+    firstName: ["kname2", "tbx_name2", "kanji_na", "mei", "givenname", "given-name", "firstname", "first-name", "name2", "氏名名", "漢字氏名名", "名"],
     lastNameKana: ["yname1", "tbx_kana1", "kana1", "kanasei", "furiganasei", "furigana_sei", "lastkana", "last_kana", "フリガナ姓", "カナ氏名姓", "セイ"],
     firstNameKana: ["yname2", "tbx_kana2", "kana2", "kanamei", "furiganamei", "furigana_mei", "firstkana", "first_kana", "フリガナ名", "カナ氏名名", "メイ"],
+    romanLastName: ["roma_sei", "romanlast", "roman_last", "ローマ字姓"],
+    romanFirstName: ["roma_na", "romanfirst", "roman_first", "ローマ字名"],
     email: ["tbx_mail", "email", "mail", "mailaddress", "mail_address", "e-mail", "account1", "domain1", "メインメール", "メールアドレス"],
     emailConfirm: ["tbx_mail_r", "email_confirm", "emailconfirmation", "mail_confirm", "mailconfirmation", "account2", "domain2", "再入力", "確認用メール"],
     subEmail: ["tbx_smail", "account3", "domain3", "サブメール"],
@@ -28,14 +30,14 @@
     postalCode: ["postalcode", "postal-code", "zipcode", "zip-code", "zip", "郵便番号"],
     postal1: ["gyubin1", "tbx_zip1", "yubing_h", "zip1", "postal1", "postalcode1", "郵便番号前"],
     postal2: ["gyubin2", "tbx_zip2", "yubing_l", "zip2", "postal2", "postalcode2", "郵便番号後"],
-    prefecture: ["gken", "ddl_ken", "pref", "prefecture", "address-level1", "都道府県"],
+    prefecture: ["gken", "keng", "ddl_ken", "pref", "prefecture", "address-level1", "都道府県"],
     fullAddress: ["fulladdress", "address", "street-address", "住所"],
     address1: ["gadrs1", "tbx_addr1", "addr1", "address1", "address-line1", "市区郡番地", "市区町村", "番地"],
     address2: ["gadrs2", "tbx_addr2", "addr2", "address2", "address-line2", "マンション", "建物名", "部屋番号"],
     phone: ["tel", "telephone", "phone", "phonenumber", "phone-number", "電話番号", "連絡先電話番号"],
-    homeTel1: ["gtel1", "tbx_tel11", "tel1", "phone1", "電話番号前"],
-    homeTel2: ["gtel2", "tbx_tel12", "tel2"],
-    homeTel3: ["gtel3", "tbx_tel13", "tel3"],
+    homeTel1: ["gtel1", "tbx_tel11", "telg_h", "telk_h", "tel1", "phone1", "電話番号前"],
+    homeTel2: ["gtel2", "tbx_tel12", "telg_m", "telk_m", "tel2"],
+    homeTel3: ["gtel3", "tbx_tel13", "telg_l", "telk_l", "tel3"],
     mobilePhone: ["mobile", "mobilephone", "mobile-phone", "cellphone", "携帯電話番号", "携帯番号", "携帯"],
     mobileTel1: ["kttel1", "tbx_keitai1", "keitai_h", "mobile1", "携帯番号前"],
     mobileTel2: ["kttel2", "tbx_keitai2", "keitai_m", "mobile2"],
@@ -52,6 +54,14 @@
     schoolStartMonth: ["schoolstartmonth", "enrollmentstartmonth", "入学月", "在籍開始月", "在籍期間月"],
     schoolEndYear: ["schoolendyear", "enrollmentendyear", "卒業予定年", "在籍終了年"],
     schoolEndMonth: ["schoolendmonth", "enrollmentendmonth", "卒業予定月", "在籍終了月"],
+    highSchoolName: ["highschoolname", "high_school_name", "koko_name", "memo1310", "高校名", "高等学校名", "出身高校"],
+    highSchoolKana: ["highschoolkana", "high_school_kana", "koko_word", "高校よみがな", "高校ふりがな", "高等学校よみがな", "出身高校よみがな"],
+    highSchoolPrefecture: ["highschoolprefecture", "high_school_prefecture", "koko_ken", "高校所在地", "高校都道府県"],
+    highSchoolType: ["highschooltype", "high_school_type", "memo1309", "高校区分", "学校詳細"],
+    highSchoolStartYear: ["highschoolstartyear", "high_school_start_year", "koko_from_y", "高校入学年"],
+    highSchoolStartMonth: ["highschoolstartmonth", "high_school_start_month", "koko_from_m", "高校入学月"],
+    highSchoolGradYear: ["highschoolgradyear", "high_school_grad_year", "koko_to_y", "memo1311_y", "高校卒業年"],
+    highSchoolGradMonth: ["highschoolgradmonth", "high_school_grad_month", "koko_to_m", "memo1311_m", "高校卒業月"],
     degree: ["degree", "学位", "課程", "取得学位"],
     degreeYear: ["degreeyear", "degree_year", "取得年月年", "取得年"],
     degreeMonth: ["degreemonth", "degree_month", "取得年月月", "取得月"],
@@ -64,10 +74,8 @@
     toeic: ["toeic", "toefl", "ielts", "英語資格", "語学", "英語スコア"],
     desiredJob: ["desiredjob", "desired_job", "jobtype", "職種希望", "希望職種", "志望職種", "興味のあるお仕事", "興味のある仕事"],
     desiredLocation: ["desiredlocation", "desired_location", "希望勤務地", "勤務地希望", "志望勤務地"],
-    companyCriteria: ["companycriteria", "selectioncriteria", "企業選び", "就職活動の軸", "重視すること", "会社選び", "魅力に感じる"],
     interestedEvents: ["interestedevents", "eventchoice", "参加希望イベント", "希望イベント", "インターンシップ", "説明会", "セミナー"],
     eventDate: ["eventdate", "event_date", "参加希望日", "希望日程", "説明会日程", "イベント日程", "別日程"],
-    requestNote: ["requestnote", "request", "希望記入欄", "希望欄", "備考", "連絡希望", "連絡事項"],
     termsConsent: ["terms", "agreement", "agree", "kiyaku", "規約", "利用条件", "同意する"],
     privacyConsent: ["privacy", "personalinfo", "personal_information", "個人情報", "プライバシー", "取り扱い"],
     nationality: ["nationality", "country", "国籍"],
@@ -77,24 +85,6 @@
     disabilityStatus: ["disability", "障がい", "障害", "配慮事項"],
     employmentHistory: ["employmenthistory", "workhistory", "jobhistory", "職歴", "勤務先", "アルバイト"],
     noAnswer: ["該当なし", "なし", "特になし"],
-    motivation: ["motivation", "message", "志望動機", "志望理由", "応募理由", "入社理由", "応募先へのメッセージ", "メッセージ"],
-    selfPr: ["selfpr", "自己pr", "自己PR", "自己ピーアール", "自己アピール"],
-    studentEffort: ["gakuchika", "学生時代に力を入れたこと", "学生時代", "力を入れたこと", "打ち込んだこと", "取り組んだこと"],
-    studyDetail: ["studydetail", "academic", "学業で取り組んだこと", "学業への取り組み", "研究内容", "専攻内容", "学修内容", "学習内容", "卒業研究", "研究概要"],
-    strengths: ["strength", "strongpoint", "強み", "長所", "得意なこと"],
-    weakness: ["weakness", "weakpoint", "弱み", "短所", "苦手なこと"],
-    careerVision: ["careervision", "futurevision", "将来像", "将来の夢", "将来やりたいこと", "キャリアビジョン", "今後の目標", "入社後に実現したいこと"],
-    jobReason: ["jobreason", "occupationreason", "職種志望理由", "希望職種の理由", "職種を希望する理由", "希望する理由"],
-    industryInterest: ["industryinterest", "businessinterest", "業界に興味", "事業に興味", "興味を持った理由", "関心を持った理由", "業界志望理由"],
-    workValues: ["workvalues", "jobaxis", "就活の軸", "仕事選びの軸", "大切にしたいこと", "働く上で大切", "価値観"],
-    challengeExperience: ["challengeexperience", "challenge", "挑戦した経験", "チャレンジした経験", "困難に挑戦", "挑戦したこと"],
-    failureExperience: ["failureexperience", "failure", "setback", "失敗経験", "挫折経験", "失敗から学んだこと", "挫折から学んだこと", "困難を乗り越えた経験"],
-    teamworkExperience: ["teamworkexperience", "teamwork", "チームで取り組んだ", "チーム経験", "協働経験", "周囲と協力"],
-    leadershipExperience: ["leadershipexperience", "leadership", "リーダーシップ", "リーダー経験", "周囲を巻き込んだ経験"],
-    achievement: ["achievement", "成果", "実績", "表彰", "受賞", "達成したこと"],
-    languageSkills: ["languageskills", "language", "語学スキル", "語学力", "英語力", "外国語"],
-    programmingSkills: ["programmingskills", "itskills", "pcskills", "ITスキル", "PCスキル", "プログラミング", "使用できるツール"],
-    portfolioUrl: ["portfoliourl", "portfolio", "website", "github", "ポートフォリオ", "制作物", "成果物URL", "githuburl"],
     howKnowCompany: ["howknow", "きっかけ", "キッカケ", "知ったきっかけ", "知ったキッカケ", "何で知った", "媒体", "就職サイト", "ナビサイト"],
     internshipExperience: ["internship", "event", "説明会", "インターン", "イベント", "参加したこと"],
     loginId: ["loginid", "userid", "user_id", "accountid", "account_id", "ログインid", "ログインID", "マイページid", "マイページID"],
@@ -178,6 +168,148 @@
   const PLATFORM_ENTRY_HINT = /mycareerbox|mcbox|mcid|openes|e2r|e2rpro|jobsuite|job-suite|freshers|hitolink|hito-link|hrmos|sonar|snar|accessonline|access-online|aol|axol/i;
   const HIGHLIGHT_STYLE_ID = "shukatsu-autofill-highlight-style";
   const HIGHLIGHT_ATTR = "data-shukatsu-autofill-highlight";
+  const E2R_SCHOOL_ASSIST_KEY = "shukatsuAutofillE2rSchoolAssist";
+  const RAW_FIELD_MAP = {
+    kanjisei: "lastName",
+    kanjina: "firstName",
+    kanasei: "lastNameKana",
+    kanana: "firstNameKana",
+    romasei: "romanLastName",
+    romana: "romanFirstName",
+    sex: "gender",
+    birthy: "birthYear",
+    birthm: "birthMonth",
+    birthd: "birthDay",
+    yubingh: "postal1",
+    yubingl: "postal2",
+    yubinkh: "postal1",
+    yubinkl: "postal2",
+    gyubin1: "postal1",
+    gyubin2: "postal2",
+    kyubin1: "postal1",
+    kyubin2: "postal2",
+    keng: "prefecture",
+    kenk: "prefecture",
+    gken: "prefecture",
+    kken: "prefecture",
+    jushog1: "address1",
+    jushog2: "address1",
+    jushog3: "address2",
+    jushok1: "address1",
+    jushok2: "address1",
+    jushok3: "address2",
+    gadrs1: "address1",
+    gadrs2: "address2",
+    kadrs1: "address1",
+    kadrs2: "address2",
+    telgh: "homeTel1",
+    telgm: "homeTel2",
+    telgl: "homeTel3",
+    telkh: "homeTel1",
+    telkm: "homeTel2",
+    telkl: "homeTel3",
+    keitaih: "mobileTel1",
+    keitaim: "mobileTel2",
+    keitail: "mobileTel3",
+    jushosame: "holidaySame",
+    email: "email",
+    email2: "emailConfirm",
+    kmail: "subEmail",
+    kmail2: "subEmailConfirm",
+    kubun: "schoolType",
+    kokushi: "schoolType",
+    dname: "schoolName",
+    bname: "faculty",
+    kname: "department",
+    schoolfromy: "schoolStartYear",
+    schoolfromm: "schoolStartMonth",
+    schooltoy: "schoolEndYear",
+    schooltom: "schoolEndMonth",
+    zemi: "seminar",
+    bikoa: "seminar",
+    shikbn: "gradStatus",
+    i1d1: "lastName",
+    i1d2: "firstName",
+    i2d1: "lastNameKana",
+    i2d2: "firstNameKana",
+    i4d1: "birthYear",
+    i4d2: "birthMonth",
+    i4d3: "birthDay",
+    i5d1: "mobileTel1",
+    i5d2: "mobileTel2",
+    i5d3: "mobileTel3",
+    i7d1: "homeTel1",
+    i7d2: "homeTel2",
+    i7d3: "homeTel3",
+    i9: "email",
+    i9chk: "emailConfirm",
+    i10: "subEmail",
+    i10chk: "subEmailConfirm",
+    i12d1: "postal1",
+    i12d2: "postal2",
+    i13: "prefecture",
+    i14: "address1",
+    i15: "address1",
+    i16: "address2",
+    i17d1: "postal1",
+    i17d2: "postal2",
+    i18: "prefecture",
+    i19: "address1",
+    i20: "address1",
+    i21: "address2",
+    i22: "schoolName",
+    i23: "faculty",
+    i24: "department",
+    i47: "schoolType",
+    i49: "departmentSystem",
+    i50d1: "gradYear",
+    i50d2: "gradMonth",
+    i68: "gender",
+    i6766: "club",
+    i6769: "club",
+    i347: "schoolType",
+    i349d1: "gradYear",
+    i349d2: "gradMonth",
+    schoolnm: "schoolName",
+    collegenm: "faculty",
+    departmentnm: "department",
+    club: "club",
+    kokoken: "highSchoolPrefecture",
+    kokoword: "highSchoolKana",
+    kokoname: "highSchoolName",
+    kokofromy: "highSchoolStartYear",
+    kokofromm: "highSchoolStartMonth",
+    kokotoy: "highSchoolGradYear",
+    kokotom: "highSchoolGradMonth",
+    memo2: "humanitiesScience",
+    "memo3[]": "desiredJob",
+    memo912: "researchSpecialty",
+    memo1290: "schoolType",
+    memo1291: "schoolType",
+    memo1309: "highSchoolType",
+    memo1310: "highSchoolName",
+    memo1292: "highSchoolName",
+    memo1311y: "highSchoolGradYear",
+    memo1311m: "highSchoolGradMonth",
+    memo18: "noAnswer",
+    memo1032: "employmentHistory",
+    memo1118: "disabilityStatus",
+    memo1122: "disabilityStatus",
+    memo1135: "disabilityStatus",
+    memo1123: "disabilityStatus"
+  };
+  const RAW_IGNORE_NAMES = new Set([
+    "menuswitch",
+    "telgkaigai",
+    "telkkaigai",
+    "keitaikaigai",
+    "yubingkaigai",
+    "yubinkkaigai",
+    "i6768",
+    "i6770",
+    "i6895",
+    "i6896"
+  ]);
 
   function normalize(value) {
     return String(value || "")
@@ -208,9 +340,66 @@
     return [digits.slice(0, 3), digits.slice(3, 7)];
   }
 
+  function splitAddressLine(address = "") {
+    const text = String(address || "").replace(/\s+/g, "").trim();
+    if (!text) return { city: "", street: "" };
+    const match = text.match(/^(.+?(?:市|区|町|村))(.+)$/);
+    if (!match) return { city: text, street: "" };
+    return { city: match[1], street: match[2] };
+  }
+
+  function inferDepartmentSystem(profile = {}) {
+    const text = `${profile.departmentSystem || ""} ${profile.faculty || ""} ${profile.department || ""}`;
+    if (profile.departmentSystem) return profile.departmentSystem;
+    if (/経済|経営|商/.test(text)) return "経済・経営・商系";
+    if (/法律|法学/.test(text)) return "法律系";
+    if (/政治/.test(text)) return "政治系";
+    if (/情報/.test(text)) return "情報系";
+    if (/外国語|英語|国際/.test(text)) return "外国語系";
+    if (/教育/.test(text)) return "教育系（文系）";
+    if (/心理|文学|史|哲学|人文/.test(text)) return "人文科学系その他";
+    if (/社会|福祉|政策/.test(text)) return "社会科学系その他";
+    if (/機械|精密/.test(text)) return "機械・精密系";
+    if (/電気|電子/.test(text)) return "電気・電子系";
+    if (/通信/.test(text)) return "通信・情報系";
+    if (/土木/.test(text)) return "土木系";
+    if (/建築/.test(text)) return "建築系";
+    if (/材料|金属|資源/.test(text)) return "金属・資源・材料系";
+    if (/数学/.test(text)) return "数学系";
+    if (/物理/.test(text)) return "物理系";
+    if (/化学/.test(text)) return "化学系";
+    if (/生物/.test(text)) return "生物系";
+    if (/農|林/.test(text)) return "農学・林学系";
+    if (/薬/.test(text)) return "薬学系";
+    if (/看護|保健|衛生/.test(text)) return "看護・保健・衛生系";
+    return /理系|工学|理工|科学/.test(`${profile.humanitiesScience || ""} ${text}`) ? "理系その他" : "文系その他";
+  }
+
+  function inferResearchSpecialty(profile = {}) {
+    if (profile.researchSpecialty) return profile.researchSpecialty;
+    const text = `${profile.faculty || ""} ${profile.department || ""} ${profile.researchTheme || ""}`;
+    if (/経営/.test(text)) return "経営学";
+    if (/経済/.test(text)) return "経済学";
+    if (/商/.test(text)) return "商学";
+    if (/法律|法学/.test(text)) return "法学";
+    if (/政治/.test(text)) return "政治学";
+    if (/国際/.test(text)) return "国際学";
+    if (/心理/.test(text)) return "心理学";
+    if (/教育/.test(text)) return "教育学";
+    if (/社会/.test(text)) return "社会学";
+    if (/文学|人文/.test(text)) return "文学";
+    if (/栄養/.test(text)) return "栄養学、栄養科学など栄養関連";
+    return /理系|工学|理工|科学/.test(`${profile.humanitiesScience || ""} ${text}`) ? "" : "上記以外の文系";
+  }
+
   function two(value) {
     const s = String(value || "").replace(/\D/g, "");
     return s.length === 1 ? `0${s}` : s;
+  }
+
+  function asciiText(value) {
+    const text = String(value || "").trim();
+    return /^[\x20-\x7e]+$/.test(text) ? text : "";
   }
 
   function choiceTokens(value) {
@@ -218,30 +407,6 @@
       .split(/[,、\n/／・;；\s]+/)
       .map((item) => normalize(item))
       .filter(Boolean);
-  }
-
-  function customAnswerMap(profile) {
-    const lines = String(profile.customAnswers || "").split(/\r?\n/);
-    return lines
-      .map((line) => {
-        const trimmed = line.trim();
-        if (!trimmed || trimmed.startsWith("#")) return null;
-        const index = trimmed.search(/[=:：＝]/);
-        if (index < 0) return null;
-        const key = trimmed.slice(0, index).trim();
-        const value = trimmed.slice(index + 1).trim();
-        if (!key || !value) return null;
-        return { key, normalizedKey: normalize(key), value };
-      })
-      .filter(Boolean)
-      .sort((a, b) => b.normalizedKey.length - a.normalizedKey.length);
-  }
-
-  function customAnswerFor(el, customAnswers) {
-    if (!customAnswers.length) return "";
-    const ctx = `${fieldContext(el)} ${normalize(optionLabel(el))}`;
-    const found = customAnswers.find((item) => item.normalizedKey.length >= 2 && ctx.includes(item.normalizedKey));
-    return found?.value || "";
   }
 
   function optionMatches(raw, wanted, field = "") {
@@ -256,6 +421,8 @@
     if (field === "gradStatus" && /卒業|予定|見込み|修了/.test(value) && /はい|yes|卒業予定|見込み|卒業見込み/.test(option)) return true;
     if (field === "gradStatus" && value.includes("卒業") && option.includes("卒業予定")) return true;
     if (field === "gradStatus" && value.includes("修了") && option.includes("修了予定")) return true;
+    if (field === "gradStatus" && value.includes("見込み") && option.includes("見込み")) return true;
+    if (field === "gradStatus" && /卒業|修了/.test(value) && /卒業|修了/.test(option) && option.includes("見込み")) return true;
     if (field === "schoolType" && value.includes("大学") && /大学|学部/.test(option)) return true;
     if (field === "humanitiesScience" && /文系|人文|社会|経済|商|法/.test(value) && /文系|文学|人文|社会|経済|経営|管理|商|法/.test(option)) return true;
     if (field === "humanitiesScience" && /理系|理工|工学|情報|自然科学/.test(value) && /理系|理工|工学|情報|自然科学/.test(option)) return true;
@@ -300,7 +467,9 @@
     const grandParentText = el.parentElement?.parentElement?.innerText || "";
     const dt = el.closest("dd")?.previousElementSibling?.innerText || "";
     const th = el.closest("td")?.previousElementSibling?.innerText || el.closest("tr")?.querySelector("th")?.innerText || "";
-    const heading = el.closest("dl, section, form")?.querySelector("h1,h2,h3,.heading_l2,.h3")?.innerText || "";
+    const section = el.closest("dl, section");
+    const heading = section?.querySelector("h1,h2,h3,.heading_l2,.h3")?.innerText || "";
+    const containerText = container?.innerText || "";
     return normalize([
       el.name,
       el.id,
@@ -314,7 +483,7 @@
       dt,
       th,
       heading,
-      container?.innerText || "",
+      containerText.length <= 320 ? containerText : "",
       parentText.length < 140 ? parentText : "",
       grandParentText.length < 180 ? grandParentText : ""
     ].join(" "));
@@ -402,6 +571,21 @@
     return Boolean(el.required || el.getAttribute("aria-required") === "true" || /必須|required/.test(ctx));
   }
 
+  function isPlaceholderChoice(text = "", value = "") {
+    const rawText = String(text || "").replace(/\s+/g, " ").trim();
+    const rawValue = String(value || "").replace(/\s+/g, " ").trim();
+    const combined = normalize(`${rawText} ${rawValue}`);
+    if (!rawText && !rawValue) return true;
+    if (!rawValue && /^[-－ー‐―]+$/.test(rawText)) return true;
+    if (/^(--|---|選択|未選択|指定なし|選択してください|请选择|choose|select|please select)$/i.test(rawText)) return true;
+    return /選択してください|未選択|指定してください|choose|pleaseselect/.test(combined);
+  }
+
+  function isPlaceholderOption(option) {
+    if (!option) return true;
+    return isPlaceholderChoice(option.text || option.textContent || "", option.value || "");
+  }
+
   function hasFieldValue(el) {
     const type = String(el.type || "").toLowerCase();
     if (type === "checkbox" || type === "radio") {
@@ -411,7 +595,7 @@
     }
     if (el.tagName === "SELECT") {
       const selected = el.options[el.selectedIndex];
-      return Boolean(el.value && selected && !/選択|未選択|指定なし|choose|select/.test(normalize(selected.text || selected.value)));
+      return Boolean(selected && !isPlaceholderOption(selected));
     }
     return Boolean(String(el.value || "").trim());
   }
@@ -488,13 +672,45 @@
     const hitoInput = /^input(\d+)$/.exec(rawName);
 
     if (/recaptcha|g-recaptcha|languagecheck/.test(rawName)) return "";
+    if (RAW_IGNORE_NAMES.has(rawName)) return "";
+    if (RAW_FIELD_MAP[rawName]) return RAW_FIELD_MAP[rawName];
     if (/hito-link|hitolink/i.test(location.hostname) && hitoInput) {
       const index = Number(hitoInput[1]);
+      if (index === 9) return "gender";
       if (index === 12) return "birthYear";
       if (index === 15) return "birthMonth";
       if (index === 18) return "birthDay";
-      if (index === 27) return "mobilePhone";
+      if (index === 21) return "email";
+      if (index === 23) return "emailConfirm";
+      if (index === 25) return "subEmail";
+      if (index === 27) return "subEmailConfirm";
+      if (index === 29) return "postalCode";
+      if (index === 32) return "prefecture";
+      if (index === 35) return "address1";
+      if (index === 37) return "address2";
+      if (index === 39) return "mobilePhone";
+      if (index === 41) return "mobilePhone";
+      if (index === 44) return "postalCode";
+      if (index === 47) return "prefecture";
+      if (index === 50) return "address1";
+      if (index === 52) return "address2";
+      if (index === 54) return "phone";
+      if (index === 56) return "phone";
+      if (index === 58) return "schoolStartYear";
+      if (index === 61) return "schoolStartMonth";
+      if (index === 71) return "schoolType";
+      if (index === 74) return "humanitiesScience";
     }
+    if (/ゼミ|研究室|所属ゼミ|所属研究室/.test(ctx)) return "seminar";
+    if (/郵便番号|postal|zipcode|zip/.test(ctx)) {
+      if (/_?d1$/.test(rawName) || /1$/.test(rawName)) return "postal1";
+      if (/_?d2$/.test(rawName) || /2$/.test(rawName)) return "postal2";
+      return "postalCode";
+    }
+    if (/都道府県|prefecture|address-level1/.test(ctx)) return "prefecture";
+    if (/学校名|学校\s*※|大学名/.test(ctx) && !/学校検索/.test(placeholder)) return "schoolName";
+    if (/学部|研究科/.test(ctx)) return "faculty";
+    if (/学科|専攻/.test(ctx)) return "department";
     if (/確認コード|認証コード|verificationcode|authcode|onetimecode|6桁/.test(allCtx + rawName)) return "verificationCode";
     if (/loginid|userid|accountid|tbxid|ログインid|ログインID|マイページid|マイページID/.test(rawName + allCtx)) return "loginId";
     if (/^local\.?email$/.test(rawName)) return "emailConfirm";
@@ -546,7 +762,6 @@
     if (/未定|別日程|希望日程|参加希望日|開催日|説明会日程|イベント日程/.test(allCtx) && el.tagName === "SELECT") return "eventDate";
     if (/マイナビ|外資就活|就活サイト|検索エンジン|wantedly|sns|紹介会社|知人からの紹介/.test(allCtx) && el.tagName === "SELECT") return "howKnowCompany";
     if (/知ったキッカケ|知ったきっかけ|何で知った|媒体/.test(allCtx)) return "howKnowCompany";
-    if (/企業理念|社会貢献|将来性|大企業|有名企業|仕事内容|休日|休暇|給与|待遇|福利厚生|職場の雰囲気|財務状況|研修制度|業界順位|勤務地で働ける/.test(allCtx)) return "companyCriteria";
     if (/^i373$/.test(rawName) || (type === "checkbox" && /ユニクロ|ジーユー|プラステ|勤務ブランド|勤務経験ブランド|勤務先ブランド/.test(allCtx))) return "employmentBrand";
     if (/^i375$/.test(rawName) || /勤務店舗|店舗名|勤務先店舗|記入例.*店/.test(allCtx)) return "employmentStore";
     if (/^i376$/.test(rawName) || /社員番号|従業員番号|スタッフ番号|8ケタ|8桁/.test(allCtx)) return "employeeNumber";
@@ -555,20 +770,6 @@
     if (/^i378$/.test(rawName) || /勤務期間|アルバイト期間/.test(allCtx)) return "employmentDuration";
     if (/紹介者名|社員からの紹介|教授からの紹介|その他.*詳細|その他を選択/.test(allCtx)) return "referralDetail";
     if (/転勤する可能性|転勤.*理解|転勤可能|転勤に同意/.test(allCtx)) return "relocationConsent";
-    if (/学業.*取り組|研究内容|専攻内容|学修内容|卒業研究|研究概要/.test(allCtx)) return "studyDetail";
-    if (/将来像|将来の夢|将来.*やりたい|キャリアビジョン|入社後.*実現|今後の目標/.test(allCtx)) return "careerVision";
-    if (/職種志望理由|希望職種.*理由|職種.*希望.*理由/.test(allCtx)) return "jobReason";
-    if (/業界.*興味|事業.*興味|業界志望理由|興味を持った理由|関心を持った理由/.test(allCtx)) return "industryInterest";
-    if (/就活の軸|仕事選びの軸|働く上で大切|大切にしたいこと|価値観/.test(allCtx)) return "workValues";
-    if (/挑戦した経験|チャレンジした経験|挑戦したこと|困難に挑戦/.test(allCtx)) return "challengeExperience";
-    if (/失敗経験|挫折経験|失敗から学んだ|挫折から学んだ|困難を乗り越えた/.test(allCtx)) return "failureExperience";
-    if (/チームで取り組|チーム経験|協働経験|周囲と協力/.test(allCtx)) return "teamworkExperience";
-    if (/リーダーシップ|リーダー経験|周囲を巻き込/.test(allCtx)) return "leadershipExperience";
-    if (/成果|実績|表彰|受賞|達成したこと/.test(allCtx) && !/研究成果物URL|成果物URL/.test(allCtx)) return "achievement";
-    if (/語学スキル|語学力|英語力|外国語/.test(allCtx)) return "languageSkills";
-    if (/ITスキル|PCスキル|プログラミング|使用できるツール|github/.test(allCtx)) return "programmingSkills";
-    if (/ポートフォリオ|制作物|成果物URL|github.*url|website|url/.test(allCtx) && /url|リンク|http|ポートフォリオ|github/.test(allCtx)) return "portfolioUrl";
-
     if (/^(tbxsmailr|account4|domain4)$/.test(rawName) || /submail.*r|smail.*r|サブメール.*再入力/.test(ctx)) return "subEmailConfirm";
     if (/^(tbxsmail|account3|domain3)$/.test(rawName) || /submail|smail|サブメール/.test(ctx)) return "subEmail";
     if (/^(tbxmailr|account2|domain2)$/.test(rawName) || /mail.*r|メール.*再入力|メール.*もう一度|もう一度.*メール/.test(ctx)) return "emailConfirm";
@@ -657,7 +858,6 @@
     if (/氏名姓|漢字氏名姓|お名前姓/.test(ctx) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "lastName";
     if (/氏名名|漢字氏名名|お名前名/.test(ctx) && !/kana|カナ|かな|ふりがな|フリガナ/.test(ctx)) return "firstName";
     if (/氏名|お名前|名前|fullname|full_name/.test(allCtx) && !/学校|大学|会社|保護者|郵便|住所|電話|メール/.test(allCtx)) return "fullName";
-    if (/希望記入欄|希望欄|備考|連絡希望|連絡事項/.test(allCtx)) return "requestNote";
     if (/住所|address/.test(allCtx) && !/メール|mail|email/.test(allCtx)) return "fullAddress";
     if (/○○大学|学校名|大学名/.test(allCtx)) return "schoolName";
     if (/○○学部|学部名/.test(allCtx)) return "faculty";
@@ -672,6 +872,7 @@
     const postal = splitPostal(profile.postalCode);
     const homeTel = splitPhone(profile.homePhone);
     const mobileTel = splitPhone(profile.mobilePhone);
+    const address = splitAddressLine(profile.address1);
     const gradYearNum = Number(String(profile.gradYear || "").replace(/\D/g, ""));
     const inferredSchoolStartYear = gradYearNum ? String(gradYearNum - 4) : "";
 
@@ -682,6 +883,8 @@
       firstName: profile.firstName,
       lastNameKana: profile.lastNameKana,
       firstNameKana: profile.firstNameKana,
+      romanLastName: profile.romanLastName || asciiText(profile.lastName),
+      romanFirstName: profile.romanFirstName || asciiText(profile.firstName),
       email: profile.email,
       emailConfirm: profile.email,
       subEmail: profile.subEmail,
@@ -696,6 +899,8 @@
       prefecture: profile.prefecture,
       fullAddress: [profile.prefecture, profile.address1, profile.address2].filter(Boolean).join(""),
       address1: profile.address1,
+      addressCity: profile.addressCity || address.city,
+      addressStreet: profile.addressStreet || address.street,
       address2: profile.address2,
       phone: profile.mobilePhone || profile.homePhone,
       mobilePhone: profile.mobilePhone,
@@ -720,6 +925,16 @@
       degree: profile.degree,
       degreeYear: profile.degreeYear || profile.gradYear,
       degreeMonth: two(profile.degreeMonth || profile.gradMonth),
+      departmentSystem: inferDepartmentSystem(profile),
+      researchSpecialty: inferResearchSpecialty(profile),
+      highSchoolName: profile.highSchoolName,
+      highSchoolKana: profile.highSchoolKana,
+      highSchoolPrefecture: profile.highSchoolPrefecture || profile.prefecture,
+      highSchoolType: profile.highSchoolType,
+      highSchoolStartYear: profile.highSchoolStartYear || (profile.highSchoolGradYear ? String(Number(profile.highSchoolGradYear) - 3) : ""),
+      highSchoolStartMonth: two(profile.highSchoolStartMonth || "04"),
+      highSchoolGradYear: profile.highSchoolGradYear,
+      highSchoolGradMonth: two(profile.highSchoolGradMonth),
       humanitiesScience: profile.humanitiesScience,
       seminar: profile.seminar,
       researchTheme: profile.researchTheme,
@@ -729,10 +944,8 @@
       toeic: profile.toeic,
       desiredJob: profile.desiredJob,
       desiredLocation: profile.desiredLocation,
-      companyCriteria: profile.companyCriteria,
       interestedEvents: profile.interestedEvents,
       eventDate: profile.eventDate,
-      requestNote: profile.requestNote,
       termsConsent: profile.termsConsent,
       privacyConsent: profile.privacyConsent,
       nationality: profile.nationality,
@@ -742,24 +955,6 @@
       disabilityStatus: profile.disabilityStatus,
       employmentHistory: profile.employmentHistory,
       noAnswer: profile.noAnswer,
-      motivation: profile.motivation,
-      selfPr: profile.selfPr,
-      studentEffort: profile.studentEffort,
-      studyDetail: profile.studyDetail,
-      strengths: profile.strengths,
-      weakness: profile.weakness,
-      careerVision: profile.careerVision,
-      jobReason: profile.jobReason,
-      industryInterest: profile.industryInterest,
-      workValues: profile.workValues,
-      challengeExperience: profile.challengeExperience,
-      failureExperience: profile.failureExperience,
-      teamworkExperience: profile.teamworkExperience,
-      leadershipExperience: profile.leadershipExperience,
-      achievement: profile.achievement,
-      languageSkills: profile.languageSkills,
-      programmingSkills: profile.programmingSkills,
-      portfolioUrl: profile.portfolioUrl,
       howKnowCompany: profile.howKnowCompany,
       internshipExperience: profile.internshipExperience,
       loginId: profile.loginId || profile.email,
@@ -787,6 +982,11 @@
 
   function valueFor(el, field, values) {
     const key = normalize(el.name || el.id);
+    if (/^input(29|44)$/.test(key)) return values.postalCode.replace(/\D/g, "");
+    if (key === "i14") return values.addressCity || values.address1;
+    if (key === "i15") return values.addressStreet || values.address1;
+    if (key === "i19") return values.addressCity || values.address1;
+    if (key === "i20") return values.addressStreet || values.address1;
     if (/_?d1$/.test(key)) {
       if (field === "fullName") return values.lastName;
       if (field === "fullNameKana") return values.lastNameKana;
@@ -951,8 +1151,9 @@
 
       const options = visibleCustomOptions(menuId);
       const preferred = preferredCustomOptions(field, wanted).map((item) => normalize(item));
-      const found = options.find((option) => optionMatches(option.text, candidate, field) || optionMatches(option.text, wanted, field))
-        || options.find((option) => preferred.includes(normalize(option.text)));
+      const validOptions = options.filter((option) => !isPlaceholderChoice(option.text));
+      const found = validOptions.find((option) => optionMatches(option.text, candidate, field) || optionMatches(option.text, wanted, field))
+        || validOptions.find((option) => preferred.includes(normalize(option.text)));
       if (found) {
         activateElement(found.el);
         await wait(320);
@@ -977,7 +1178,7 @@
 
   function findSelectOption(select, wanted, field = "") {
     const normalized = normalize(wanted);
-    const options = Array.from(select.options);
+    const options = Array.from(select.options).filter((option) => !isPlaceholderOption(option));
     const exact = options.find((option) => normalize(option.value) === normalized || normalize(option.text) === normalized);
     const padded = options.find((option) => normalize(option.value) === normalize(two(wanted)) || normalize(option.text) === normalize(two(wanted)));
     const numericWanted = String(wanted || "").replace(/^0+/, "");
@@ -1012,7 +1213,7 @@
     select.dispatchEvent(new Event("change", { bubbles: true }));
     select.dispatchEvent(new Event("blur", { bubbles: true }));
     await wait(260);
-    return true;
+    return hasFieldValue(select);
   }
 
   function forceSelectByTextOrValue(select, wanted, field = "") {
@@ -1087,7 +1288,7 @@
     return true;
   }
 
-  async function refillMissingRequired(values, customAnswers, overwrite, matches, skipped) {
+  async function refillMissingRequired(values, overwrite, matches, skipped) {
     for (let pass = 0; pass < 3; pass += 1) {
       const missing = emptyRequiredFields();
       if (!missing.length) return;
@@ -1096,9 +1297,10 @@
         const el = findFieldElement(item);
         if (!el) continue;
         const field = detectField(el);
-        const customWanted = customAnswerFor(el, customAnswers);
-        const wanted = customWanted || (field ? valueFor(el, field, values) : "");
-        const effectiveField = field || "customAnswer";
+        if (!field) continue;
+        const wanted = valueFor(el, field, values);
+        if (wanted === undefined || wanted === null || wanted === "") continue;
+        const effectiveField = field;
         const before = hasFieldValue(el) ? String(el.value || optionLabel(el) || "") : "";
         const ok = await fillOneField(el, effectiveField, wanted, overwrite);
         await wait(180);
@@ -1118,7 +1320,9 @@
   }
 
   function selectOptionSilently(select, matcher) {
-    const found = Array.from(select.options).find((option) => matcher(normalize(option.text), normalize(option.value), option));
+    const found = Array.from(select.options)
+      .filter((option) => !isPlaceholderOption(option))
+      .find((option) => matcher(normalize(option.text), normalize(option.value), option));
     if (!found) return false;
     select.value = found.value;
     found.selected = true;
@@ -1127,7 +1331,9 @@
 
   function selectPreferredTextSilently(select, texts) {
     const normalizedTexts = texts.map((text) => normalize(text));
-    const found = Array.from(select.options).find((option) => normalizedTexts.includes(normalize(option.text)));
+    const found = Array.from(select.options)
+      .filter((option) => !isPlaceholderOption(option))
+      .find((option) => normalizedTexts.includes(normalize(option.text)));
     if (!found) return false;
     select.value = found.value;
     found.selected = true;
@@ -1147,7 +1353,7 @@
         el: item,
         text: (item.innerText || item.textContent || "").replace(/\s+/g, " ").trim()
       }))
-      .filter((item) => item.text);
+      .filter((item) => item.text && !isPlaceholderChoice(item.text));
     const found = items.find((item) => optionMatches(item.text, wanted, field))
       || items.find((item) => preferred.includes(normalize(item.text)));
     if (!found) return false;
@@ -1156,7 +1362,158 @@
     return hasFieldValue(el) || root.innerText.includes(found.text);
   }
 
+  function e2rAssistPayload(values) {
+    return {
+      expiresAt: Date.now() + 5 * 60 * 1000,
+      schoolName: values.schoolName || "",
+      faculty: values.faculty || "",
+      department: values.department || "",
+      schoolType: values.schoolType || ""
+    };
+  }
+
+  function saveE2rSchoolAssist(values) {
+    const payload = e2rAssistPayload(values);
+    if (!payload.schoolName && !payload.faculty && !payload.department) return false;
+    try {
+      localStorage.setItem(E2R_SCHOOL_ASSIST_KEY, JSON.stringify(payload));
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function readE2rSchoolAssist() {
+    try {
+      const payload = JSON.parse(localStorage.getItem(E2R_SCHOOL_ASSIST_KEY) || "null");
+      if (!payload || Number(payload.expiresAt || 0) < Date.now()) return null;
+      if (!payload.schoolName && !payload.faculty && !payload.department) return null;
+      return payload;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function clearE2rSchoolAssist() {
+    try {
+      localStorage.removeItem(E2R_SCHOOL_ASSIST_KEY);
+    } catch (_) {}
+  }
+
+  function e2rSchoolTypeValue(schoolType = "") {
+    const raw = normalize(schoolType);
+    if (/博士/.test(raw)) return "1";
+    if (/修士|大学院/.test(raw)) return "2";
+    if (/短大/.test(raw)) return "4";
+    if (/専門/.test(raw)) return "5";
+    if (/高専/.test(raw)) return "6";
+    return "3";
+  }
+
+  function inputByName(name) {
+    return document.querySelector(`input[name="${name}"]`);
+  }
+
+  function clickE2rDecisionButton() {
+    const button = Array.from(document.querySelectorAll('input[type="button"], input[type="submit"], button'))
+      .find((el) => /決\s*定|決定/.test(el.value || el.innerText || el.textContent || ""));
+    if (!button) return false;
+    activateElement(button);
+    return true;
+  }
+
+  async function assistE2rSchoolPopup() {
+    if (!/e2r/i.test(location.hostname) || !/\/school\//i.test(location.pathname)) return false;
+    const payload = readE2rSchoolAssist();
+    if (!payload) return false;
+
+    if (/SchoolSearchInitialSelect/i.test(location.pathname)) {
+      const select = document.querySelector('select[name="schoolType"]');
+      if (select) {
+        select.value = e2rSchoolTypeValue(payload.schoolType);
+        select.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+      const directUrl = new URL("/eARTH/e2r/user/school/SchoolSearchDirectInput", location.origin);
+      directUrl.searchParams.set("school_field", "");
+      directUrl.searchParams.set("college_field", "");
+      directUrl.searchParams.set("department_field", "");
+      location.href = directUrl.href;
+      return true;
+    }
+
+    if (/SchoolSearchSchoolSelect/i.test(location.pathname)) {
+      const directButton = Array.from(document.querySelectorAll('input[type="button"], button'))
+        .find((el) => /直接入力/.test(el.value || el.innerText || el.textContent || ""));
+      if (directButton) {
+        activateElement(directButton);
+        return true;
+      }
+    }
+
+    if (/SchoolSearchDirectInput/i.test(location.pathname)) {
+      const school = inputByName("school_nm");
+      const college = inputByName("college_nm");
+      const department = inputByName("department_nm");
+      if (school && payload.schoolName) setNativeValue(school, payload.schoolName);
+      if (college && payload.faculty) setNativeValue(college, payload.faculty);
+      if (department && payload.department) setNativeValue(department, payload.department);
+      await wait(120);
+      clickE2rDecisionButton();
+      return true;
+    }
+
+    if (/SchoolSearchConfirm/i.test(location.pathname)) {
+      await wait(120);
+      clearE2rSchoolAssist();
+      clickE2rDecisionButton();
+      return true;
+    }
+
+    return false;
+  }
+
+  async function openE2rSchoolAssist(values, matches) {
+    if (!/e2r/i.test(location.hostname)) return false;
+    if (setE2rReadonlySchoolValues(values, matches)) return true;
+    const schoolField = document.querySelector('input[name="I22"]');
+    const schoolButton = Array.from(document.querySelectorAll('input[type="button"], button'))
+      .find((el) => /学校検索/.test(el.value || el.innerText || el.textContent || ""));
+    if (!schoolField || hasFieldValue(schoolField) || !schoolButton) return false;
+    if (!saveE2rSchoolAssist(values)) return false;
+    activateElement(schoolButton);
+    matches.push({ field: "schoolName", name: "I22", tag: "input", retry: true, platformFinal: true, assist: "e2r-school" });
+    return true;
+  }
+
+  function setE2rReadonlySchoolValues(values, matches) {
+    const pairs = [
+      ["I22", "I22_chk", values.schoolName, "schoolName"],
+      ["I23", "I23_chk", values.faculty, "faculty"],
+      ["I24", "I24_chk", values.department, "department"]
+    ];
+    let changed = false;
+    for (const [visibleName, hiddenName, value, field] of pairs) {
+      if (!value) continue;
+      const visible = document.querySelector(`input[name="${visibleName}"]`);
+      const hidden = document.querySelector(`input[name="${hiddenName}"]`);
+      if (visible) {
+        setNativeValue(visible, value);
+        changed = true;
+      }
+      if (hidden) {
+        setNativeValue(hidden, value);
+        changed = true;
+      }
+      if (visible || hidden) {
+        matches.push({ field, name: visibleName, tag: "input", retry: true, platformFinal: true, assist: "e2r-school-direct" });
+      }
+    }
+    return changed;
+  }
+
   async function applyPlatformSpecificFinalValues(values, matches) {
+    await openE2rSchoolAssist(values, matches);
+
     if (/job\.axol\.jp$/i.test(location.hostname)) {
       const schoolField = document.querySelector('select[name="c_school_keito"]');
       if (schoolField && !hasFieldValue(schoolField)) {
@@ -1179,6 +1536,16 @@
 
     if (/hito-link|hitolink/i.test(location.hostname)) {
       const targets = [
+        { selector: "#input-9", field: "gender", wanted: values.gender },
+        { selector: "#input-12", field: "birthYear", wanted: values.birthYear },
+        { selector: "#input-15", field: "birthMonth", wanted: values.birthMonth },
+        { selector: "#input-18", field: "birthDay", wanted: values.birthDay },
+        { selector: "#input-32", field: "prefecture", wanted: values.prefecture },
+        { selector: "#input-47", field: "prefecture", wanted: values.prefecture },
+        { selector: "#input-58", field: "schoolStartYear", wanted: values.schoolStartYear },
+        { selector: "#input-61", field: "schoolStartMonth", wanted: values.schoolStartMonth },
+        { selector: "#input-71", field: "schoolType", wanted: values.schoolType },
+        { selector: "#input-74", field: "humanitiesScience", wanted: values.humanitiesScience },
         { selector: "#input-84", field: "howKnowCompany", wanted: values.howKnowCompany },
         { selector: "#input-98", field: "qualification", wanted: values.qualification || values.driverLicense },
         { selector: "#input-158", field: "relocationConsent", wanted: values.relocationConsent }
@@ -1194,7 +1561,6 @@
 
   async function fill(profile, options = {}) {
     const values = profileValues(profile);
-    const customAnswers = customAnswerMap(profile);
     const overwrite = options.overwrite !== false;
     const fields = getFillableFields();
     const matches = [];
@@ -1203,10 +1569,10 @@
 
     for (const el of fields) {
       const field = detectField(el);
-      const customWanted = customAnswerFor(el, customAnswers);
-      const wanted = customWanted || (field ? valueFor(el, field, values) : "");
+      if (!field) continue;
+      const wanted = valueFor(el, field, values);
       if (wanted === undefined || wanted === null || wanted === "") continue;
-      const effectiveField = field || "customAnswer";
+      const effectiveField = field;
       const radioGroupKey = el.type === "radio" ? `${effectiveField}:${el.name || el.id || effectiveField}` : "";
       if (radioGroupKey && completedRadioGroups.has(radioGroupKey)) continue;
       if (!overwrite && el.value && el.type !== "radio" && el.type !== "checkbox") {
@@ -1223,17 +1589,17 @@
       else if (el.type !== "checkbox") skipped.push({ field: effectiveField, name: el.name || el.id, reason: "no-option" });
     }
 
-    await refillMissingRequired(values, customAnswers, overwrite, matches, skipped);
+    await refillMissingRequired(values, overwrite, matches, skipped);
     await applyPlatformSpecificFinalValues(values, matches);
 
     const currentFields = getFillableFields();
     const unresolvedSkipped = skipped.filter((item) => {
       const el = currentFields.find((candidate) =>
-        (candidate.name || candidate.id) === item.name && (detectField(candidate) || "customAnswer") === item.field
+        (candidate.name || candidate.id) === item.name && detectField(candidate) === item.field
       );
       if (!el) return true;
       if (hasFieldValue(el)) return false;
-      return item.field === "customAnswer" || isRequiredField(el);
+      return isRequiredField(el);
     });
     const detected = currentFields
       .map((el) => fieldInfo(el))
@@ -1265,7 +1631,7 @@
       const type = String(el.type || "").toLowerCase();
       const name = normalize(el.name || el.id);
       if (/recaptcha|g-recaptcha|languagecheck/.test(name)) return false;
-      return !["hidden", "submit", "button", "image", "reset", "file"].includes(type) && !el.disabled && !el.readOnly;
+      return !["hidden", "submit", "button", "image", "reset", "file"].includes(type) && !el.disabled && !el.readOnly && isVisible(el);
     });
   }
 
@@ -1458,4 +1824,6 @@
     }
     return false;
   });
+
+  assistE2rSchoolPopup().catch(() => {});
 })();
