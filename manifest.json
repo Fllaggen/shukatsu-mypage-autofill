@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Shukatsu MyPage Autofill",
-  "description": "新卒採用マイページ登録フォームをローカル保存プロフィールから自動入力します。",
-  "version": "0.11.0",
-  "permissions": ["activeTab", "scripting", "storage", "tabs"],
+  "description": "Autofill Japanese recruiting mypage registration forms from a locally saved profile.",
+  "version": "0.14.8",
+  "permissions": ["activeTab", "debugger", "scripting", "storage", "tabs"],
   "host_permissions": ["http://*/*", "https://*/*"],
   "action": {
     "default_title": "Shukatsu Autofill",

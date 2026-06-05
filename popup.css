@@ -287,3 +287,22 @@ input[type="checkbox"] {
 .grid.three {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
+
+.grid.phone-three {
+  grid-template-columns: 0.8fr 1fr 1fr;
+}
+
+.phone-block {
+  margin-top: 8px;
+}
+
+.phone-title {
+  margin-bottom: 5px;
+  color: #3d4856;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.phone-block label {
+  margin-bottom: 0;
+}

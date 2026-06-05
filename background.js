@@ -37,8 +37,55 @@ async function sendToActiveTab(message) {
   return chrome.tabs.sendMessage(tab.id, message);
 }
 
+async function clickThroughDebugger(tabId, x, y) {
+  if (!tabId || !Number.isFinite(x) || !Number.isFinite(y)) {
+    throw new Error("クリック位置を特定できませんでした。");
+  }
+
+  const target = { tabId };
+  let attached = false;
+  try {
+    await chrome.debugger.attach(target, "1.3");
+    attached = true;
+  } catch (error) {
+    if (!/already attached/i.test(error.message || "")) throw error;
+  }
+
+  try {
+    await chrome.debugger.sendCommand(target, "Input.dispatchMouseEvent", {
+      type: "mousePressed",
+      x,
+      y,
+      button: "left",
+      buttons: 1,
+      clickCount: 1
+    });
+    await chrome.debugger.sendCommand(target, "Input.dispatchMouseEvent", {
+      type: "mouseReleased",
+      x,
+      y,
+      button: "left",
+      buttons: 0,
+      clickCount: 1
+    });
+  } finally {
+    if (attached) {
+      try {
+        await chrome.debugger.detach(target);
+      } catch (_) {}
+    }
+  }
+}
+
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (!message || !message.type) return false;
+
+  if (message.type === "REAL_CLICK") {
+    clickThroughDebugger(_sender.tab?.id, Number(message.x), Number(message.y))
+      .then(() => sendResponse({ ok: true }))
+      .catch((error) => sendResponse({ ok: false, error: error.message }));
+    return true;
+  }
 
   if (
     message.type === "SCAN_ACTIVE" ||

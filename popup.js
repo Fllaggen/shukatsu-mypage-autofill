@@ -10,7 +10,13 @@ const DEFAULT_PROFILE = {
   email: "",
   subEmail: "",
   homePhone: "",
+  homeTel1: "",
+  homeTel2: "",
+  homeTel3: "",
   mobilePhone: "",
+  mobileTel1: "",
+  mobileTel2: "",
+  mobileTel3: "",
   birthYear: "",
   birthMonth: "",
   birthDay: "",
@@ -24,9 +30,11 @@ const DEFAULT_PROFILE = {
   gradMonth: "03",
   gradStatus: "",
   schoolName: "",
+  schoolKana: "",
   faculty: "",
   department: "",
   schoolType: "",
+  schoolEstablishment: "",
   schoolStartYear: "",
   schoolStartMonth: "",
   schoolEndYear: "",
@@ -108,15 +116,24 @@ const FIELD_LABELS = {
   address1: "市区郡番地",
   address2: "建物名",
   phone: "電話番号",
+  homePhone: "自宅電話",
+  homeTel1: "自宅電話1",
+  homeTel2: "自宅電話2",
+  homeTel3: "自宅電話3",
   mobilePhone: "携帯番号",
+  mobileTel1: "携帯番号1",
+  mobileTel2: "携帯番号2",
+  mobileTel3: "携帯番号3",
   holidaySame: "休暇中住所",
   gradYear: "卒業年",
   gradMonth: "卒業月",
   gradStatus: "卒業区分",
   schoolName: "学校名",
+  schoolKana: "学校よみがな",
   faculty: "学部",
   department: "学科・専攻",
   schoolType: "学校区分",
+  schoolEstablishment: "学校の設置区分",
   humanitiesScience: "文理区分",
   highSchoolName: "高校名",
   highSchoolKana: "高校よみがな",
@@ -162,17 +179,48 @@ function setStatus(message, warn = false) {
   statusEl.textContent = message;
 }
 
+function splitPhone(phone = "") {
+  const raw = String(phone || "").trim();
+  if (!raw) return ["", "", ""];
+  const dashed = raw.split("-").map((part) => part.replace(/\D/g, "")).filter(Boolean);
+  if (dashed.length >= 3) return dashed.slice(0, 3);
+  const digits = raw.replace(/\D/g, "");
+  if (digits.length === 11) return [digits.slice(0, 3), digits.slice(3, 7), digits.slice(7)];
+  if (digits.length === 10) return [digits.slice(0, 2), digits.slice(2, 6), digits.slice(6)];
+  return [digits, "", ""];
+}
+
+function joinPhone(parts) {
+  const normalized = parts.map((part) => String(part || "").replace(/\D/g, ""));
+  return normalized.some(Boolean) ? normalized.filter(Boolean).join("-") : "";
+}
+
+function hydratePhoneParts(profile) {
+  const next = { ...profile };
+  const homeParts = [next.homeTel1, next.homeTel2, next.homeTel3];
+  const mobileParts = [next.mobileTel1, next.mobileTel2, next.mobileTel3];
+  if (!homeParts.some(Boolean)) {
+    [next.homeTel1, next.homeTel2, next.homeTel3] = splitPhone(next.homePhone);
+  }
+  if (!mobileParts.some(Boolean)) {
+    [next.mobileTel1, next.mobileTel2, next.mobileTel3] = splitPhone(next.mobilePhone);
+  }
+  next.homePhone = joinPhone([next.homeTel1, next.homeTel2, next.homeTel3]) || next.homePhone || "";
+  next.mobilePhone = joinPhone([next.mobileTel1, next.mobileTel2, next.mobileTel3]) || next.mobilePhone || "";
+  return next;
+}
+
 function readForm() {
   const profile = { ...DEFAULT_PROFILE };
   for (const el of fields) {
     const key = el.dataset.key;
     profile[key] = el.type === "checkbox" ? el.checked : el.value.trim();
   }
-  return profile;
+  return hydratePhoneParts(profile);
 }
 
 function writeForm(profile) {
-  const merged = { ...DEFAULT_PROFILE, ...profile };
+  const merged = hydratePhoneParts({ ...DEFAULT_PROFILE, ...profile });
   for (const el of fields) {
     const value = merged[el.dataset.key];
     if (el.type === "checkbox") el.checked = Boolean(value);

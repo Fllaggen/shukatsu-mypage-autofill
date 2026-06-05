@@ -60,9 +60,21 @@
         <h2>連絡先</h2>
         <label>メインメール<input data-key="email" type="email" autocomplete="email"></label>
         <label>サブメール<input data-key="subEmail" type="email"></label>
-        <div class="grid two">
-          <label>自宅電話<input data-key="homePhone" placeholder="03-1234-5678"></label>
-          <label>携帯番号<input data-key="mobilePhone" placeholder="090-1234-5678"></label>
+        <div class="phone-block">
+          <div class="phone-title">自宅電話</div>
+          <div class="grid phone-three">
+            <label>1つ目<input data-key="homeTel1" inputmode="numeric" placeholder="03"></label>
+            <label>2つ目<input data-key="homeTel2" inputmode="numeric" placeholder="1234"></label>
+            <label>3つ目<input data-key="homeTel3" inputmode="numeric" placeholder="5678"></label>
+          </div>
+        </div>
+        <div class="phone-block">
+          <div class="phone-title">携帯番号</div>
+          <div class="grid phone-three">
+            <label>1つ目<input data-key="mobileTel1" inputmode="numeric" placeholder="080"></label>
+            <label>2つ目<input data-key="mobileTel2" inputmode="numeric" placeholder="1234"></label>
+            <label>3つ目<input data-key="mobileTel3" inputmode="numeric" placeholder="5678"></label>
+          </div>
         </div>
       </section>
 
@@ -109,7 +121,10 @@
             <option value="既卒">既卒</option>
           </select>
         </label>
-        <label>学校名<input data-key="schoolName"></label>
+        <div class="grid two">
+          <label>学校名<input data-key="schoolName"></label>
+          <label>学校よみがな<input data-key="schoolKana" placeholder="とうきょうだいがく"></label>
+        </div>
         <div class="grid two">
           <label>学部<input data-key="faculty"></label>
           <label>学科・専攻<input data-key="department"></label>
@@ -134,6 +149,15 @@
             </select>
           </label>
         </div>
+        <label>学校の設置区分
+          <select data-key="schoolEstablishment">
+            <option value="">未選択</option>
+            <option value="国立">国立</option>
+            <option value="公立">公立</option>
+            <option value="私立">私立</option>
+            <option value="日本国外">日本国外</option>
+          </select>
+        </label>
         <div class="grid two">
           <label>入学年<input data-key="schoolStartYear" placeholder="2023"></label>
           <label>入学月<input data-key="schoolStartMonth" placeholder="04"></label>
